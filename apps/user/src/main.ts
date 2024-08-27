@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { UserModule } from './user.module';
 import { Transport } from '@nestjs/microservices';
 import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(UserModule);
@@ -29,6 +30,11 @@ async function bootstrap() {
   );
 
   app.enableCors();
+  const document = SwaggerModule.createDocument(
+    app,
+    new DocumentBuilder().setTitle('User API').build(),
+  );
+  SwaggerModule.setup('docs', app, document);
   await app.listen(8001);
 }
 bootstrap();

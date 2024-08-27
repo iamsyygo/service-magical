@@ -22,11 +22,12 @@ enum Sex {
 model User {
   id        Int       @id @default(autoincrement())
   username  String    @unique
-  password  String    @db.VarChar(50)
+  password  String    @db.VarChar(100)
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
   avatar    String?   @db.VarChar(255)
   sex       Sex       @default(UNKNOWN)
+  email     String    @unique
 
   @@map("system_user")
 }
