@@ -13,11 +13,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Sex {
+  GIRL
+  MAN
+  UNKNOWN
+}
 
 model User {
-  id          Int      @id @default(autoincrement())    /// 主键
-  username    String   @unique                          /// 用户名
-  password    String   @db.VarChar(50)                  /// 密码
-  createdAt   DateTime @default(now())                  /// 创建时间
-  updatedAt   DateTime @updatedAt                       /// 更新时间
+  id        Int       @id @default(autoincrement())
+  username  String    @unique
+  password  String    @db.VarChar(50)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  avatar    String?   @db.VarChar(255)
+  sex       Sex       @default(UNKNOWN)
+
+  @@map("system_user")
 }

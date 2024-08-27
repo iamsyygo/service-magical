@@ -7,6 +7,7 @@ import { RedisModule } from '@app/redis';
 
 @Module({
   imports: [
+    RedisModule,
     ClientsModule.register([
       {
         name: MicroserviceNames.USER,
@@ -16,7 +17,6 @@ import { RedisModule } from '@app/redis';
         },
       },
     ]),
-    RedisModule,
   ],
   controllers: [AppController],
   providers: [AppService],

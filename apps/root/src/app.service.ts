@@ -3,6 +3,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { MicroserviceNames } from 'shared/enums/microservice-names.enum';
 import { firstValueFrom } from 'rxjs';
 import { RedisService } from '@app/redis';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class AppService {
@@ -16,13 +17,10 @@ export class AppService {
   @Inject(RedisService)
   redisService: RedisService;
 
-  async testUserMicroservice() {
-    const value = await firstValueFrom(this.userClient.send('user', ''));
-
-    this.redisService.set('user', value);
-
-    const redisUser = await this.redisService.get('user');
-
-    return redisUser;
+  async createUser(body: Prisma.UserCreateArgs) {
+    const value = await firstValueFrom(
+      this.userClient.send('user:create', body),
+    );
+    return value;
   }
 }
