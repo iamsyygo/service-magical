@@ -11,13 +11,13 @@ export class CreateUserDto {
   @IsEmail()
   email: string;
 
-  @ApiProperty({ description: '密码', example: 'password123' })
+  @ApiProperty({ description: '密码', example: '123456' })
   @IsString()
   password: string;
 
   @ApiProperty({
     description: '头像URL',
-    example: 'http://example.com/avatar.jpg',
+    example: 'https://picsum.photos/200',
     required: false,
   })
   @IsOptional()
@@ -28,6 +28,6 @@ export class CreateUserDto {
   @IsEnum(Sex)
   sex: Sex;
 
-  @ApiProperty({ description: '验证码' })
+  @ApiProperty({ description: '验证码', example: '' })
   captcha: string;
 }

@@ -13,7 +13,7 @@ export class UserService {
   @Inject(RedisService)
   redisService: RedisService;
 
-  async createUser(data: Prisma.UserCreateInput & { captcha: string }) {
+  async createUser(data: Prisma.UserCreateInput & { captcha?: string }) {
     const captcha = await this.redisService.get(
       REGISTER_CAPTCHA_REDIS_KEY + `:${data.username}`,
     );

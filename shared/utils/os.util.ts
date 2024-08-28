@@ -35,6 +35,6 @@ export function getAvailableNetworkAddresses(port = 8000, protocol = 'http') {
 
   return {
     local: local[0],
-    network: network.slice(1),
+    network: network,
   };
 }

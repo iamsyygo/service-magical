@@ -1,8 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { UserModule } from './user.module';
 import { Transport } from '@nestjs/microservices';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { getAvailableNetworkAddresses } from 'shared/utils/os.util';
 
 async function bootstrap() {
   const app = await NestFactory.create(UserModule);
@@ -35,6 +36,16 @@ async function bootstrap() {
     new DocumentBuilder().setTitle('User API').build(),
   );
   SwaggerModule.setup('docs', app, document);
-  await app.listen(8001);
+
+  const port: number = 8001;
+
+  app.enableCors();
+  await app.listen(port);
+  const { local, network } = getAvailableNetworkAddresses(port);
+  const localAddress = `Local: \n${local}`;
+  const networkAddress = `Network: \n${network.join('\n')}`;
+  const message = `\n\n${localAddress}\n\n${networkAddress}\n`;
+
+  Logger.log(message, 'Bootstrap');
 }
 bootstrap();
