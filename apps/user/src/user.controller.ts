@@ -17,4 +17,12 @@ export class UserController {
   createUser(@Body() body: Prisma.UserCreateInput) {
     return this.userService.createUser(body);
   }
+
+  @ApiOperation({ summary: '发送注册验证码' })
+  @ApiBody({ type: CreateUserDto })
+  @Post('send_register_captcha')
+  @MessagePattern('user:send_register_captcha')
+  sendRegisterCaptcha(@Body() body: Prisma.UserCreateInput) {
+    return this.userService.sendRegisterCaptcha(body);
+  }
 }
