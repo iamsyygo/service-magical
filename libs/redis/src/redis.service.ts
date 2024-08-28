@@ -47,4 +47,15 @@ export class RedisService {
       await this.redisClient.expire(key, ttl);
     }
   }
+
+  /**
+   * 删除key
+   * @param key
+   *
+   * @example
+   * del('user:1')
+   */
+  async del(key: string) {
+    await this.redisClient.del(key);
+  }
 }

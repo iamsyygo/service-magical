@@ -4,9 +4,10 @@ import { RedisService } from '@app/redis';
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Prisma } from '@prisma/client';
-import { hashSync } from 'bcryptjs';
+import { compareSync, hashSync } from 'bcryptjs';
 import { REGISTER_CAPTCHA_REDIS_KEY } from 'shared/constants';
 import { md5 } from 'shared/utils/crypto.util';
+import { UserInputDto } from './dto/index.dto';
 
 @Injectable()
 export class UserService {
@@ -50,7 +51,7 @@ export class UserService {
     const password = hashSync(data.password, 10);
     data.password = password;
 
-    return this.prismaService.user.create({
+    const result = await this.prismaService.user.create({
       data,
       select: {
         id: true,
@@ -58,6 +59,15 @@ export class UserService {
         email: true,
       },
     });
+
+    if (result) {
+      await this.redisService.del(
+        REGISTER_CAPTCHA_REDIS_KEY + `:${data.email}`,
+      );
+      return result;
+    }
+
+    return false;
   }
 
   // 发送注册验证码
@@ -81,5 +91,60 @@ export class UserService {
       subject: '注册验证码',
       html: `<h1>${username}，您的注册验证码是：${captcha}</h1>`,
     });
+  }
+
+  getUserWithWhere(where: Prisma.UserFindUniqueArgs['where']) {
+    return this.prismaService.user.findUnique({
+      where,
+    });
+  }
+
+  async signin(body: UserInputDto) {
+    const { email, username, password, captcha } = body;
+
+    if (!email && !username) {
+      throw new BadRequestException('邮箱或用户名不能为空');
+    }
+
+    if (!password) {
+      throw new BadRequestException('密码不能为空');
+    }
+
+    if (!captcha) {
+      throw new BadRequestException('验证码不能为空');
+    }
+
+    const storedCaptcha = await this.redisService.get(
+      REGISTER_CAPTCHA_REDIS_KEY + `:${email}`,
+    );
+
+    if (!storedCaptcha) {
+      throw new BadRequestException('验证码已过期');
+    }
+
+    if (storedCaptcha !== captcha) {
+      throw new BadRequestException('验证码错误');
+    }
+
+    const user = await this.getUserWithWhere({
+      email: email,
+      username: username,
+    });
+
+    if (!user) {
+      throw new BadRequestException('用户不存在');
+    }
+
+    const isPasswordValid = compareSync(password, user.password);
+    if (!isPasswordValid) {
+      throw new BadRequestException('密码错误');
+    }
+
+    // 返回用户信息或生成 JWT 等
+    return {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+    };
   }
 }
