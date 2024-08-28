@@ -23,10 +23,8 @@ export class UserService {
   private configService: ConfigService;
 
   async createUser(data: Prisma.UserCreateInput & { captcha?: string }) {
-    // console.log(this.configService.get);
-
     const captcha = await this.redisService.get(
-      REGISTER_CAPTCHA_REDIS_KEY + `:${data.username}`,
+      REGISTER_CAPTCHA_REDIS_KEY + `:${data.email}`,
     );
 
     if (!captcha) {
