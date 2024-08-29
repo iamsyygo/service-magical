@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `system_user` MODIFY `createdAt` TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6);
