@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Sex } from '@prisma/client';
-import { IsString, IsOptional, IsEnum, IsEmail } from 'class-validator';
+import { IsEmail, IsString } from 'class-validator';
 
 export class UserInputDto {
   @ApiProperty({ description: '用户名', example: 'john_doe' })
@@ -16,5 +15,6 @@ export class UserInputDto {
   password: string;
 
   @ApiProperty({ description: '验证码', example: '' })
+  @IsString()
   captcha: string;
 }

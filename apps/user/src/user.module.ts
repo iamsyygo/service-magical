@@ -4,11 +4,33 @@ import { UserService } from './user.service';
 import { PrismaModule } from '@app/prisma';
 import { RedisModule } from '@app/redis';
 import { EmailModule } from '@app/email';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from '@app/common/guard/auth.guard';
 
 @Module({
-  imports: [PrismaModule, RedisModule, EmailModule, ConfigModule.forRoot()],
+  imports: [
+    ConfigModule.forRoot(),
+    PrismaModule,
+    RedisModule,
+    EmailModule,
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      imports: [ConfigModule],
+      global: true,
+      useFactory(configService: ConfigService) {
+        const secret = configService.get('JWT_ACCESS_SECRET');
+        return {
+          secret,
+          signOptions: {
+            expiresIn: '30m', // 默认 30 分钟
+          },
+        };
+      },
+    }),
+  ],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, { provide: APP_GUARD, useClass: AuthGuard }],
 })
 export class UserModule {}

@@ -1,13 +1,21 @@
 import { EmailService } from '@app/email';
 import { PrismaService } from '@app/prisma';
 import { RedisService } from '@app/redis';
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Prisma } from '@prisma/client';
 import { compareSync, hashSync } from 'bcryptjs';
-import { REGISTER_CAPTCHA_REDIS_KEY } from 'shared/constants';
-import { md5 } from 'shared/utils/crypto.util';
+import {
+  REGISTER_CAPTCHA_REDIS_KEY,
+  SIGNIN_CAPTCHA_REDIS_KEY,
+} from 'shared/constants';
 import { UserInputDto } from './dto/index.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
@@ -22,6 +30,10 @@ export class UserService {
 
   @Inject(ConfigService)
   private configService: ConfigService;
+
+  @Inject(JwtService)
+  private jwtService: JwtService;
+  // constructor(private jwtService: JwtService) {}
 
   async createUser(data: Prisma.UserCreateInput & { captcha?: string }) {
     const captcha = await this.redisService.get(
@@ -70,14 +82,14 @@ export class UserService {
     return false;
   }
 
-  // 发送注册验证码
-  async sendRegisterCaptcha(body: Prisma.UserCreateInput) {
+  // 发送验证码
+  async sendCaptcha(body: Prisma.UserCreateInput, redisKey: string) {
     const { email, username } = body;
     // const captcha = md5(email + Date.now().toString());
     const captcha = Math.random().toString().slice(-6);
 
     await this.redisService.set(
-      REGISTER_CAPTCHA_REDIS_KEY + `:${email}`,
+      redisKey + `:${email}`,
       captcha,
       60 * 5, // 5 min
     );
@@ -100,6 +112,7 @@ export class UserService {
   }
 
   async signin(body: UserInputDto) {
+    console.log(body);
     const { email, username, password, captcha } = body;
 
     if (!email && !username) {
@@ -140,11 +153,68 @@ export class UserService {
       throw new BadRequestException('密码错误');
     }
 
-    // 返回用户信息或生成 JWT 等
+    const accessToken = this.createAccessToken(user.id);
+    const refreshToken = this.createRefreshToken(user.id);
+
+    delete user.password;
+
+    this.redisService.del(SIGNIN_CAPTCHA_REDIS_KEY + `:${email}`);
+
+    // 返回用户信息、生成 JWT 等
     return {
-      id: user.id,
-      username: user.username,
-      email: user.email,
+      user,
+      accessToken,
+      refreshToken,
     };
+  }
+
+  // 生成 Access Token
+  private createAccessToken(userId: number): string {
+    const payload = { sub: userId };
+    const secret = this.configService.get('JWT_ACCESS_SECRET');
+    const expiresIn = this.configService.get('JWT_ACCESS_EXPIRES_IN');
+
+    return 'Bearer ' + this.jwtService.sign(payload, { secret, expiresIn });
+  }
+
+  // 生成刷新 Token
+  private createRefreshToken(userId: number): string {
+    const payload = { sub: userId };
+    const secret = this.configService.get('JWT_REFRESH_SECRET');
+    const expiresIn = this.configService.get('JWT_REFRESH_EXPIRES_IN');
+
+    return 'Bearer ' + this.jwtService.sign(payload, { secret, expiresIn });
+  }
+
+  // 刷新令牌
+  async refreshToken(body: { accessToken: string; refreshToken: string }) {
+    let { accessToken = '', refreshToken = '' } = body;
+    accessToken = accessToken.split(' ').pop();
+    refreshToken = refreshToken.split(' ').pop();
+    // 解码 Access Token 以确保它是由系统生成的
+    const decodedAccessToken = this.jwtService.decode(accessToken);
+    if (!decodedAccessToken) {
+      throw new UnauthorizedException('无效的 Access Token');
+    }
+    try {
+      // 验证刷新 Token
+      const decodedRefreshToken = this.jwtService.verify(refreshToken, {
+        secret: this.configService.get('JWT_REFRESH_SECRET'),
+      });
+
+      // 生成新的 Access Token
+      const newAccessToken = this.createAccessToken(decodedRefreshToken.sub);
+
+      // 生成新的 Refresh Token，如果账号7天内活跃，可以无限续期
+      const newRefreshToken = this.createRefreshToken(decodedRefreshToken.sub);
+
+      return {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+      };
+    } catch (error) {
+      console.log(error);
+      throw new UnauthorizedException('无效的 Refresh Token');
+    }
   }
 }
