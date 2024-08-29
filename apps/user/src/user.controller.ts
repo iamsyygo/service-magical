@@ -1,15 +1,25 @@
-import { Body, Controller, HttpCode, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Param,
+  Patch,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { Prisma } from '@prisma/client';
 import { UserService } from './user.service';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UserInputDto } from './dto/index.dto';
+import { ChangePasswordDto, UserInputDto } from './dto/index.dto';
 import { UnwantedAuthenticate } from '@app/common/decorator/unwanted-authenticate.decorator';
 import {
   REGISTER_CAPTCHA_REDIS_KEY,
   SIGNIN_CAPTCHA_REDIS_KEY,
+  UPDATE_USER_PASSWORD_REDIS_KEY,
 } from 'shared/constants';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @ApiTags('用户相关模块')
 @Controller('user')
@@ -35,13 +45,28 @@ export class UserController {
     return this.userService.sendCaptcha(body, REGISTER_CAPTCHA_REDIS_KEY);
   }
 
-  @ApiOperation({ summary: '发送登錄验证码' })
+  @ApiOperation({ summary: '发送登录证码' })
   @ApiBody({ type: CreateUserDto })
   @Post('send_signin_captcha')
   @UnwantedAuthenticate()
   @MessagePattern('user:send_signin_captcha')
   sendSigninCaptcha(@Body() body: Prisma.UserCreateInput) {
     return this.userService.sendCaptcha(body, SIGNIN_CAPTCHA_REDIS_KEY);
+  }
+
+  @ApiOperation({ summary: '发送修改密码证码' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: { type: 'string', description: '邮箱' },
+      },
+    },
+  })
+  @Post('send_update_password_captcha')
+  @MessagePattern('user:sent_update_password_captcha')
+  sendUpdatePasswordCaptcha(@Body() body: Prisma.UserCreateInput) {
+    return this.userService.sendCaptcha(body, UPDATE_USER_PASSWORD_REDIS_KEY);
   }
 
   @ApiOperation({ summary: '根据 ID 查询用户' })
@@ -75,5 +100,21 @@ export class UserController {
   @MessagePattern('user:refresh_token')
   refreshToken(@Body() body: { refreshToken: string; accessToken: string }) {
     return this.userService.refreshToken(body);
+  }
+
+  @ApiOperation({ summary: '修改密码' })
+  @ApiBody({ type: ChangePasswordDto })
+  @Post('change_password')
+  @MessagePattern('user:change_password')
+  changePassword(@Body() body: ChangePasswordDto) {
+    return this.userService.changePassword(body);
+  }
+
+  @ApiOperation({ summary: '修改用户信息' })
+  @Post('update')
+  @MessagePattern('user:update')
+  @UnwantedAuthenticate()
+  async updateUser(@Body() updateUserDto: UpdateUserDto) {
+    return this.userService.updateUser(updateUserDto);
   }
 }

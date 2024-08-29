@@ -28,13 +28,15 @@ export function getAvailableNetworkAddresses(port = 8000, protocol = 'http') {
       const url = `${protocol}://${host}:${port}`;
       if (detail.address.includes('127.0.0.1')) {
         local.push(url);
-      } else {
+      }
+
+      if (host.startsWith('192.168') || host.startsWith('172')) {
         network.push(url);
       }
     });
 
   return {
     local: local[0],
-    network: network,
+    network: network.sort(),
   };
 }

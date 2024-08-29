@@ -4,9 +4,11 @@ import { AppService } from './app.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { MicroserviceNames } from 'shared/enums/microservice-names.enum';
 import { RedisModule } from '@app/redis';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     RedisModule,
     ClientsModule.register([
       {

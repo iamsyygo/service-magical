@@ -1,19 +1,27 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Sex } from '@prisma/client';
-import { IsEmail, IsEnum, IsOptional, IsString } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsEnum,
+  IsEmail,
+  IsNotEmpty,
+} from 'class-validator';
 
-export class CreateUserDto {
+export class UpdateUserDto {
+  @ApiProperty({ description: 'id' })
+  @IsNotEmpty()
+  id: any;
+
   @ApiProperty({ description: '用户名', example: 'john_doe' })
   @IsString()
+  @IsNotEmpty()
   username: string;
 
   @ApiProperty({ description: '邮箱', example: '2683030687@qq.com' })
   @IsEmail()
+  @IsNotEmpty()
   email: string;
-
-  @ApiProperty({ description: '密码', example: '123456' })
-  @IsString()
-  password: string;
 
   @ApiProperty({
     description: '头像URL',

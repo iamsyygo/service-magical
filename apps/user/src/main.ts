@@ -4,6 +4,9 @@ import { Transport } from '@nestjs/microservices';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { getAvailableNetworkAddresses } from 'shared/utils/os.util';
+import { consoleAppName } from 'shared/utils/log.util';
+import { ConfigService } from '@nestjs/config';
+import { basename, resolve } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create(UserModule);
@@ -15,12 +18,7 @@ async function bootstrap() {
     },
   });
 
-  // const app = await NestFactory.createMicroservice(UserModule, {
-  //   transport: Transport.TCP,
-  //   options: {
-  //     port: 8089,
-  //   },
-  // });
+  const configService = app.get(ConfigService);
 
   await app.startAllMicroservices();
 
@@ -42,11 +40,13 @@ async function bootstrap() {
 
   app.enableCors();
   await app.listen(port);
-  const { local, network } = getAvailableNetworkAddresses(port);
-  const localAddress = `Local: \n${local}`;
-  const networkAddress = `Network: \n${network.join('\n')}`;
-  const message = `\n\n${localAddress}\n\n${networkAddress}\n`;
 
-  Logger.log(message, 'Bootstrap');
+  const { local, network } = getAvailableNetworkAddresses(port);
+  const localAddress = `   Local: \n   - ${local}`;
+  const networkAddress = `   Network: \n   - ${network.join('\n   - ')}`;
+  const message = `\n\n${localAddress}\n\n${networkAddress}\n`;
+  const currentModule = basename(resolve(__dirname));
+  Logger.verbose(message, 'App run at');
+  consoleAppName(configService.get('APP_NAME'), currentModule);
 }
 bootstrap();

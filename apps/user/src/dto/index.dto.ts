@@ -18,3 +18,21 @@ export class UserInputDto {
   @IsString()
   captcha: string;
 }
+
+export class ChangePasswordDto {
+  @ApiProperty({ description: '邮箱', example: '2683030687@qq.com' })
+  @IsEmail()
+  email: string;
+
+  @ApiProperty({ description: '新密码', example: '123456' })
+  @IsString()
+  newPassword: string;
+
+  @ApiProperty({ description: '旧密码', example: '123456' })
+  @IsString()
+  oldPassword: string;
+
+  @ApiProperty({ description: '验证码', example: '' })
+  @IsString()
+  captcha: string;
+}

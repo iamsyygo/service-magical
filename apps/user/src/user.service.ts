@@ -13,9 +13,12 @@ import { compareSync, hashSync } from 'bcryptjs';
 import {
   REGISTER_CAPTCHA_REDIS_KEY,
   SIGNIN_CAPTCHA_REDIS_KEY,
+  UPDATE_USER_DATA_REDIS_KEY,
+  UPDATE_USER_PASSWORD_REDIS_KEY,
 } from 'shared/constants';
-import { UserInputDto } from './dto/index.dto';
+import { ChangePasswordDto, UserInputDto } from './dto/index.dto';
 import { JwtService } from '@nestjs/jwt';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -216,5 +219,105 @@ export class UserService {
       console.log(error);
       throw new UnauthorizedException('无效的 Refresh Token');
     }
+  }
+
+  async changePassword(data: ChangePasswordDto) {
+    const { email, oldPassword, newPassword, captcha } = data;
+
+    const storedCaptcha = await this.redisService.get(
+      UPDATE_USER_PASSWORD_REDIS_KEY + `:${email}`,
+    );
+
+    if (!storedCaptcha) {
+      throw new BadRequestException('验证码已过期');
+    }
+
+    if (storedCaptcha !== captcha) {
+      throw new BadRequestException('验证码错误');
+    }
+
+    const user = await this.prismaService.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new BadRequestException('用户不存在');
+    }
+
+    // 验证旧密码
+    const isOldPasswordValid = compareSync(oldPassword, user.password);
+    if (!isOldPasswordValid) {
+      throw new BadRequestException('旧密码错误');
+    }
+
+    const hashedNewPassword = hashSync(newPassword, 10);
+    await this.prismaService.user.update({
+      where: { email },
+      data: { password: hashedNewPassword },
+    });
+
+    await this.redisService.del(UPDATE_USER_PASSWORD_REDIS_KEY + `:${email}`);
+
+    return true;
+  }
+
+  async updateUser(data: UpdateUserDto) {
+    const { id, username, email, captcha, sex, avatar } = data;
+
+    // 查找用户
+    const user = await this.prismaService.user.findUnique({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new BadRequestException('用户不存在');
+    }
+
+    // 验证用户名是否唯一
+    if (username && username !== user.username) {
+      const existingUserByUsername = await this.prismaService.user.findUnique({
+        where: { username },
+      });
+      if (existingUserByUsername) {
+        throw new BadRequestException('用户名已存在');
+      }
+    }
+
+    // 验证邮箱是否唯一
+    if (email && email !== user.email) {
+      const existingUserByEmail = await this.prismaService.user.findUnique({
+        where: { email },
+      });
+      if (existingUserByEmail) {
+        throw new BadRequestException('邮箱已存在');
+      }
+    }
+
+    const storedCaptcha = await this.redisService.get(
+      UPDATE_USER_DATA_REDIS_KEY + `:${email}`,
+    );
+
+    if (!storedCaptcha) {
+      throw new BadRequestException('验证码已过期');
+    }
+
+    if (storedCaptcha !== captcha) {
+      throw new BadRequestException('验证码错误');
+    }
+
+    this.redisService.del(UPDATE_USER_DATA_REDIS_KEY + `:${email}`);
+    // 更新用户信息
+    const updatedUser = await this.prismaService.user.update({
+      where: { id },
+      data: {
+        username,
+        email,
+        avatar,
+        sex,
+        // 其他可更新的用户信息字段
+      },
+    });
+
+    return updatedUser;
   }
 }
