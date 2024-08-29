@@ -83,3 +83,13 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+---
+
+## Prisma migration
+
+```bash
+pnpm prisma:migrate -- user
+```
+
+- `--` is used to pass arguments to the script
