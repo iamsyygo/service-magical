@@ -90,6 +90,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/common/tsconfig.lib.json"
       }
+    },
+    "quick-build": {
+      "type": "application",
+      "root": "apps/quick-build",
+      "entryFile": "main",
+      "sourceRoot": "apps/quick-build/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/quick-build/tsconfig.app.json"
+      }
     }
   }
 }

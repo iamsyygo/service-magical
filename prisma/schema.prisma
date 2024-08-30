@@ -20,9 +20,9 @@ enum Sex {
 }
 
 model User {
-  id        Int       @id @default(autoincrement()) /// @id 代表主键
-  username  String    @unique /// 用户名
-  password  String    @db.VarChar(100) /// 密码
+  id        Int       @id @default(autoincrement())
+  username  String    @unique
+  password  String    @db.VarChar(100)
   createdAt DateTime  @default(now()) @db.Timestamp(6)
   updatedAt DateTime? @updatedAt @db.Timestamp(6)
   avatar    String?   @db.VarChar(255)
@@ -30,4 +30,47 @@ model User {
   email     String    @unique
 
   @@map("system_user")
+}
+
+enum FromType {
+  INPUT
+  SELECT
+  RADIO
+  CHECKBOX
+  DATE
+  TIME
+  DATETIME
+  TEXTAREA
+  DEFAULT
+  CUSTOM
+}
+
+model quickBuildTemplate {
+  id        Int       @id @default(autoincrement())
+  code      String    @db.VarChar(100)
+  tableName String    @map("table_name") @db.VarChar(100)
+  comment   String?   @db.VarChar(255)
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime? @updatedAt @db.Timestamp(6)
+
+  @@map("quick_build_template")
+}
+
+model quickBuildTemplateMap {
+  id          Int       @id @default(autoincrement())
+  code        String    @db.VarChar(100)
+  tableName   String    @map("table_name") @db.VarChar(100)
+  columnName  String    @unique @map("column_name") @db.VarChar(100)
+  columnTitle String?   @map("column_title") @db.VarChar(100)
+  mergeAmount Int?      @default(1) @map("merge_amount")
+  columnIndex Int       @map("column_index")
+  rowIndex    Int       @map("row_index")
+  formType    String    @map("form_type") @db.VarChar(100)
+  comment     String?   @db.VarChar(255)
+  pid         Int?      @map("pid")
+  isInquire   Boolean?  @default(false) @map("is_inquire")
+  createdAt   DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime? @updatedAt @db.Timestamp(6)
+
+  @@map("quick_build_template_map")
 }
