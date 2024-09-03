@@ -7,21 +7,12 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { getAvailableNetworkAddresses } from 'shared/utils/os.util';
 import { basename, resolve } from 'path';
 import { consoleAppName } from 'shared/utils/log.util';
-declare global {
-  interface BigInt {
-    toJSON(): string | number;
-  }
-}
+import { fixBigIntToJSON } from 'shared/utils/fix.util';
+
 async function bootstrap() {
   const app = await NestFactory.create(QuickBuildModule);
-  /**
-   * fix: Do not know how to serialize a BigInt
-   * see: https://github.com/prisma/studio/issues/614
-   */
-  BigInt.prototype.toJSON = function () {
-    const int = Number.parseInt(this.toString());
-    return int ?? this.toString();
-  };
+
+  fixBigIntToJSON();
 
   app.connectMicroservice({
     transport: Transport.TCP,

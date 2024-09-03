@@ -5,5 +5,12 @@
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "^shared/constants$": "../../../shared/constants/index.ts",
+    "^@app/redis(|/.*)$": "../../..//libs/redis/src/$1",
+    "^@app/prisma(|/.*)$": "../../..//libs/prisma/src/$1",
+    "^@app/email(|/.*)$": "../../..//libs/email/src/$1",
+    "^@app/common(|/.*)$": "../../..//libs/common/src/$1"
   }
 }
