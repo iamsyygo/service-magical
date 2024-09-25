@@ -17,7 +17,13 @@ import { Client } from 'minio';
         const useSSL = configService.get('MINIO_USE_SSL');
         const accessKey = configService.get('MINIO_ACCESS_KEY');
         const secretKey = configService.get('MINIO_SECRET_KEY');
-        const config = { endPoint, port, useSSL, accessKey, secretKey };
+        const config = {
+          endPoint,
+          port: Number(port),
+          useSSL: JSON.parse(useSSL),
+          accessKey,
+          secretKey,
+        };
         const client = new Client(config);
         return client;
       },

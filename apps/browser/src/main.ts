@@ -16,7 +16,7 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
 
   const configService = app.get(ConfigService);
-  const port: number = 8003;
+  const port: number = 8083;
   await app.listen(port);
 
   const { local, network } = getAvailableNetworkAddresses(port);
