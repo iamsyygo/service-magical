@@ -1,21 +1,25 @@
 import { Module } from '@nestjs/common';
 import { RedisService } from './redis.service';
-import { REDIS_NAME } from 'shared/constants';
+import { REDIS_CLIENT } from 'shared/constants';
 import { createClient } from 'redis';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   providers: [
+    ConfigService,
     RedisService,
     {
-      provide: REDIS_NAME,
-      async useFactory() {
+      inject: [ConfigService],
+      provide: REDIS_CLIENT,
+      async useFactory(configService) {
+        const host = configService.get('REDIS_HOST');
+        const port = configService.get('REDIS_PORT');
+        const username = configService.get('REDIS_USERNAME');
+        const password = configService.get('REDIS_PASSWORD');
         const client = createClient({
-          socket: {
-            host: 'localhost',
-            port: 6379,
-          },
-          username: 'default',
-          password: '123456',
+          socket: { host, port },
+          username,
+          password,
         });
         await client.connect();
         return client;

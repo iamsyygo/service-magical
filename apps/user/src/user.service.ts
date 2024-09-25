@@ -10,12 +10,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Prisma } from '@prisma/client';
 import { compareSync, hashSync } from 'bcryptjs';
-import {
-  REGISTER_CAPTCHA_REDIS_KEY,
-  SIGNIN_CAPTCHA_REDIS_KEY,
-  UPDATE_USER_DATA_REDIS_KEY,
-  UPDATE_USER_PASSWORD_REDIS_KEY,
-} from 'shared/constants';
+import { REDIS_KEYS } from 'shared/constants';
 import { ChangePasswordDto, UserInputDto } from './dto/index.dto';
 import { JwtService } from '@nestjs/jwt';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -40,7 +35,7 @@ export class UserService {
 
   async createUser(data: Prisma.UserCreateInput & { captcha?: string }) {
     const captcha = await this.redisService.get(
-      REGISTER_CAPTCHA_REDIS_KEY + `:${data.email}`,
+      REDIS_KEYS.REGISTER_CAPTCHA + `:${data.email}`,
     );
 
     if (!captcha) {
@@ -77,7 +72,7 @@ export class UserService {
 
     if (result) {
       await this.redisService.del(
-        REGISTER_CAPTCHA_REDIS_KEY + `:${data.email}`,
+        REDIS_KEYS.REGISTER_CAPTCHA + `:${data.email}`,
       );
       return result;
     }
@@ -100,7 +95,7 @@ export class UserService {
     return await this.emailService.sendMail({
       from: {
         name: this.configService.get('APP_NAME'),
-        address: this.configService.get('EMAIL_USER'),
+        address: this.configService.get('MAIL_USERNAME'),
       },
       to: email,
       subject: '注册验证码',
@@ -131,7 +126,7 @@ export class UserService {
     }
 
     const storedCaptcha = await this.redisService.get(
-      REGISTER_CAPTCHA_REDIS_KEY + `:${email}`,
+      REDIS_KEYS.REGISTER_CAPTCHA + `:${email}`,
     );
 
     if (!storedCaptcha) {
@@ -161,7 +156,7 @@ export class UserService {
 
     delete user.password;
 
-    this.redisService.del(SIGNIN_CAPTCHA_REDIS_KEY + `:${email}`);
+    this.redisService.del(REDIS_KEYS.SIGNIN_CAPTCHA + `:${email}`);
 
     // 返回用户信息、生成 JWT 等
     return {
@@ -174,8 +169,8 @@ export class UserService {
   // 生成 Access Token
   private createAccessToken(userId: number): string {
     const payload = { sub: userId };
-    const secret = this.configService.get('JWT_ACCESS_SECRET');
-    const expiresIn = this.configService.get('JWT_ACCESS_EXPIRES_IN');
+    const secret = this.configService.get('JWT_ACCESS_TOKEN_SECRET');
+    const expiresIn = this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION');
 
     return 'Bearer ' + this.jwtService.sign(payload, { secret, expiresIn });
   }
@@ -183,8 +178,8 @@ export class UserService {
   // 生成刷新 Token
   private createRefreshToken(userId: number): string {
     const payload = { sub: userId };
-    const secret = this.configService.get('JWT_REFRESH_SECRET');
-    const expiresIn = this.configService.get('JWT_REFRESH_EXPIRES_IN');
+    const secret = this.configService.get('JWT_REFRESH_TOKEN_SECRET');
+    const expiresIn = this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION');
 
     return 'Bearer ' + this.jwtService.sign(payload, { secret, expiresIn });
   }
@@ -202,7 +197,7 @@ export class UserService {
     try {
       // 验证刷新 Token
       const decodedRefreshToken = this.jwtService.verify(refreshToken, {
-        secret: this.configService.get('JWT_REFRESH_SECRET'),
+        secret: this.configService.get('JWT_REFRESH_TOKEN_SECRET'),
       });
 
       // 生成新的 Access Token
@@ -225,7 +220,7 @@ export class UserService {
     const { email, oldPassword, newPassword, captcha } = data;
 
     const storedCaptcha = await this.redisService.get(
-      UPDATE_USER_PASSWORD_REDIS_KEY + `:${email}`,
+      REDIS_KEYS.UPDATE_USER_PASSWORD + `:${email}`,
     );
 
     if (!storedCaptcha) {
@@ -256,7 +251,7 @@ export class UserService {
       data: { password: hashedNewPassword },
     });
 
-    await this.redisService.del(UPDATE_USER_PASSWORD_REDIS_KEY + `:${email}`);
+    await this.redisService.del(REDIS_KEYS.UPDATE_USER_PASSWORD + `:${email}`);
 
     return true;
   }
@@ -294,7 +289,7 @@ export class UserService {
     }
 
     const storedCaptcha = await this.redisService.get(
-      UPDATE_USER_DATA_REDIS_KEY + `:${email}`,
+      REDIS_KEYS.UPDATE_USER_DATA + `:${email}`,
     );
 
     if (!storedCaptcha) {
@@ -305,7 +300,7 @@ export class UserService {
       throw new BadRequestException('验证码错误');
     }
 
-    this.redisService.del(UPDATE_USER_DATA_REDIS_KEY + `:${email}`);
+    this.redisService.del(REDIS_KEYS.UPDATE_USER_DATA + `:${email}`);
     // 更新用户信息
     const updatedUser = await this.prismaService.user.update({
       where: { id },

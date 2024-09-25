@@ -21,12 +21,12 @@ export class EmailService {
   initEmail() {
     try {
       const transport = {
-        host: this.configService.get('EMAIL_HOST'),
-        port: +this.configService.get('EMAIL_PORT'),
+        host: this.configService.get('MAIL_HOST'),
+        port: +this.configService.get('MAIL_PORT'),
         secure: this.configService.get('EMAIL_SECURE', false),
         auth: {
-          user: this.configService.get('EMAIL_USER'),
-          pass: this.configService.get('EMAIL_PASS'),
+          user: this.configService.get('MAIL_USERNAME'),
+          pass: this.configService.get('MAIL_PASSWORD'),
         },
       };
 

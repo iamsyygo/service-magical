@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
+import { FileModule } from '@app/file';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { UserService } from './user.service';
     RedisModule,
     EmailModule,
     CommonModule,
+    FileModule,
   ],
   controllers: [UserController],
   providers: [UserService, { provide: APP_GUARD, useClass: AuthGuard }],

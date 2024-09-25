@@ -1,4 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { NO_JWT_VERIFY } from 'shared/constants';
+import { EXCLUDE_JWT_VERIFICATION } from 'shared/constants';
 
-export const UnwantedAuthenticate = () => SetMetadata(NO_JWT_VERIFY, true);
+export const UnwantedAuthenticate = () =>
+  SetMetadata(EXCLUDE_JWT_VERIFICATION, true);

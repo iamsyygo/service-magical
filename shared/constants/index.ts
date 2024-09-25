@@ -1,17 +1,20 @@
-// redis name
-export const REDIS_NAME = 'APP_REDIS_CLIENT';
+// Redis 客户端名称
+export const REDIS_CLIENT = 'APP_REDIS_CLIENT';
 
-// register captcha redis key
-export const REGISTER_CAPTCHA_REDIS_KEY = 'system_register_captcha';
+// MinIO 客户端名称
+export const MINIO_CLIENT = 'APP_MINIO_CLIENT';
 
-// sign in captcha redis key
-export const SIGNIN_CAPTCHA_REDIS_KEY = 'system_signin_captcha';
+// Redis 相关 Key 值
+export const REDIS_KEYS = {
+  // 注册验证码
+  REGISTER_CAPTCHA: 'captcha_register',
+  // 登录验证码
+  SIGNIN_CAPTCHA: 'captcha_signin',
+  // 更新用户密码
+  UPDATE_USER_PASSWORD: 'captcha_update_password',
+  // 更新用户数据
+  UPDATE_USER_DATA: 'captcha_update_user',
+};
 
-// update user password redis key
-export const UPDATE_USER_PASSWORD_REDIS_KEY = 'system_update_user_password';
-
-// update user data redis key
-export const UPDATE_USER_DATA_REDIS_KEY = 'system_update_user_data';
-
-// Do not verify JWT
-export const NO_JWT_VERIFY = 'reflector:skip_jwt_verify';
+// 不验证 JWT
+export const EXCLUDE_JWT_VERIFICATION = 'reflector:skip_jwt_verify';

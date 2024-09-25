@@ -16,9 +16,9 @@ export class QuickBuildService {
 
   // 获取表
   getDatabaseTables() {
-    const schema = this.configService.get('DATABASE_TABLE_BRANCH');
+    const schema = this.configService.get('DB_TABLE_BRANCH');
     if (!schema) {
-      throw new Error('DATABASE_TABLE_BRANCH is required');
+      throw new Error('DB_TABLE_BRANCH is required');
     }
     return this.prismaService.$queryRaw`
     SELECT
@@ -35,9 +35,9 @@ export class QuickBuildService {
 
   // 根据表获取字段信息
   getColumnWithTable(tableName: string) {
-    const schema = this.configService.get('DATABASE_TABLE_BRANCH');
+    const schema = this.configService.get('DB_TABLE_BRANCH');
     if (!schema) {
-      throw new Error('DATABASE_TABLE_BRANCH is required');
+      throw new Error('DB_TABLE_BRANCH is required');
     }
     return this.prismaService.$queryRaw`
       SELECT

@@ -9,7 +9,7 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { Observable } from 'rxjs';
-import { NO_JWT_VERIFY } from 'shared/constants';
+import { EXCLUDE_JWT_VERIFICATION } from 'shared/constants';
 
 interface JwtUserData {
   id: number;
@@ -37,7 +37,7 @@ export class AuthGuard implements CanActivate {
     const request: Request = context.switchToHttp().getRequest();
 
     const unwantedAuthenticate = this.reflector.getAllAndOverride(
-      NO_JWT_VERIFY,
+      EXCLUDE_JWT_VERIFICATION,
       [context.getClass(), context.getHandler()],
     );
 

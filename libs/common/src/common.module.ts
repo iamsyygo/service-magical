@@ -11,7 +11,7 @@ import { JwtModule } from '@nestjs/jwt';
       imports: [ConfigModule],
       global: true,
       useFactory(configService: ConfigService) {
-        const secret = configService.get('JWT_ACCESS_SECRET');
+        const secret = configService.get('JWT_ACCESS_TOKEN_SECRET');
         return {
           secret,
           signOptions: {
