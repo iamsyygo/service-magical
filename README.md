@@ -1,95 +1,116 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Magical
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+欢迎来到 **神奇的 Magical** 项目！这是一个基于 NestJS 的微服务项目。我们使用 pnpm 作为包管理工具，让我们一起开启这段神奇的旅程吧！
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 目录
 
-## Description
+- [Magical](#magical)
+  - [目录](#目录)
+  - [安装](#安装)
+  - [运行](#运行)
+  - [添加模块](#添加模块)
+  - [添加共享库](#添加共享库)
+  - [重置下数据库](#重置下数据库)
+  - [创建新模型](#创建新模型)
+  - [项目结构](#项目结构)
+  - [贡献](#贡献)
+  - [许可证](#许可证)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 安装
 
-## Project setup
+首先，确保你已经安装了 [Node.js](https://nodejs.org/) 和 [pnpm](https://pnpm.io/)。
 
 ```bash
-$ pnpm install
+# 克隆仓库
+git clone https://github.com/iamsyygo/magical.git
+
+# 进入项目目录
+cd magical
+
+# 安装依赖
+pnpm install
 ```
 
-## Compile and run the project
+## 运行
+
+要启动项目，请运行以下命令：
 
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+# 启动开发服务器
+pnpm run start:dev
 ```
 
-## Run tests
+服务器将会根据每个微服务的端口号启动。
+
+## 添加模块
+
+想要添加一个新的模块？没问题！只需运行以下命令：
 
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+# 使用 Nest CLI 添加新模块
+nest g app <name>
 ```
 
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
-
----
-
-## Prisma migration
+例如，添加一个名为 `cats` 的模块：
 
 ```bash
-pnpm prisma:migrate -- user
+nest g app cats
 ```
 
-- `--` is used to pass arguments to the script
+## 添加共享库
+
+```bash
+nest g lib <name>
+```
+
+## 重置下数据库
+
+```bash
+npx prisma migrate reset
+```
+
+## 创建新模型
+
+```bash
+npx prisma migrate dev --name <name>
+```
+
+## 项目结构
+
+项目的基本结构如下：
+
+```bash
+.
+├── apps
+│   ├── root # 根应用
+│   │   ├── src
+│   │   │   ├── main.ts
+│   │   │   ├── app.module.ts
+│   │   │   ├── app.controller.ts
+│   │   │   └── app.service.ts
+│   │   └── tsconfig.json
+│   │
+│   ├── user # 用户微服务
+│   │   ├── user.module.ts
+│   │   ├── user.controller.ts
+│   │   └── user.service.ts
+│   │
+│   ├── libs   # 共享库
+│   ├── shared # 共享代码
+│   ├── prisma # 数据库模型
+│   └── .env
+│
+├── ...
+├── nest-cli.json
+├── package.json
+├── README.md
+└── tsconfig.json
+```
+
+## 贡献
+
+欢迎任何形式的贡献！请先阅读 [贡献指南](CONTRIBUTING.md) 以了解如何参与。
+
+## 许可证
+
+本项目使用 [MIT 许可证](LICENSE)。

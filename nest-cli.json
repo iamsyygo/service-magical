@@ -100,13 +100,13 @@
         "tsConfigPath": "apps/quick-build/tsconfig.app.json"
       }
     },
-    "files": {
+    "browser": {
       "type": "application",
-      "root": "apps/files",
+      "root": "apps/browser",
       "entryFile": "main",
-      "sourceRoot": "apps/files/src",
+      "sourceRoot": "apps/browser/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/files/tsconfig.app.json"
+        "tsConfigPath": "apps/browser/tsconfig.app.json"
       }
     }
   }

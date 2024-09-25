@@ -45,32 +45,51 @@ enum FromType {
   CUSTOM
 }
 
-model quickBuildTemplate {
-  id        Int       @id @default(autoincrement())
-  code      String    @db.VarChar(100)
-  tableName String    @map("table_name") @db.VarChar(100)
-  comment   String?   @db.VarChar(255)
-  createdAt DateTime  @default(now()) @db.Timestamp(6)
-  updatedAt DateTime? @updatedAt @db.Timestamp(6)
+// model quickBuildTemplate {
+//   id        Int       @id @default(autoincrement())
+//   code      String    @db.VarChar(100)
+//   tableName String    @map("table_name") @db.VarChar(100)
+//   comment   String?   @db.VarChar(255)
+//   createdAt DateTime  @default(now()) @db.Timestamp(6)
+//   updatedAt DateTime? @updatedAt @db.Timestamp(6)
 
-  @@map("quick_build_template")
-}
+//   @@map("quick_build_template")
+// }
 
-model quickBuildTemplateMap {
+// model quickBuildTemplateMap {
+//   id          Int       @id @default(autoincrement())
+//   code        String    @db.VarChar(100)
+//   tableName   String    @map("table_name") @db.VarChar(100)
+//   columnName  String    @unique @map("column_name") @db.VarChar(100)
+//   columnTitle String?   @map("column_title") @db.VarChar(100)
+//   mergeAmount Int?      @default(1) @map("merge_amount")
+//   columnIndex Int       @map("column_index")
+//   rowIndex    Int       @map("row_index")
+//   formType    String    @map("form_type") @db.VarChar(100)
+//   comment     String?   @db.VarChar(255)
+//   pid         Int?      @map("pid")
+//   isInquire   Boolean?  @default(false) @map("is_inquire")
+//   createdAt   DateTime  @default(now()) @db.Timestamp(6)
+//   updatedAt   DateTime? @updatedAt @db.Timestamp(6)
+
+//   @@map("quick_build_template_map")
+// }
+
+model BookmarksVault {
   id          Int       @id @default(autoincrement())
-  code        String    @db.VarChar(100)
-  tableName   String    @map("table_name") @db.VarChar(100)
-  columnName  String    @unique @map("column_name") @db.VarChar(100)
-  columnTitle String?   @map("column_title") @db.VarChar(100)
-  mergeAmount Int?      @default(1) @map("merge_amount")
-  columnIndex Int       @map("column_index")
-  rowIndex    Int       @map("row_index")
-  formType    String    @map("form_type") @db.VarChar(100)
-  comment     String?   @db.VarChar(255)
-  pid         Int?      @map("pid")
-  isInquire   Boolean?  @default(false) @map("is_inquire")
   createdAt   DateTime  @default(now()) @db.Timestamp(6)
   updatedAt   DateTime? @updatedAt @db.Timestamp(6)
+  title       String    @db.VarChar(200)
+  originTitle String?   @map("origin_title") @db.VarChar(200)
+  defTitle    String?   @map("def_title") @db.VarChar(200)
+  url         String    @db.VarChar(800)
+  addDate     Int       @map("add_date")
+  icon        String?   @db.Text
+  html        String?   @db.Text
+  text        String?   @db.Text
+  isHandled   Boolean?  @default(false) @map("is_handled")
+  describes   String?   @db.VarChar(500)
+  types       String?   @db.VarChar(100)
 
-  @@map("quick_build_template_map")
+  @@map("bookmarks_vault")
 }

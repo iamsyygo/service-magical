@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { FilesModule } from './files.module';
+import { BrowserModule } from './browser.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { getAvailableNetworkAddresses } from 'shared/utils/os.util';
 import { basename, resolve } from 'path';
@@ -8,10 +8,10 @@ import { ConfigService } from '@nestjs/config';
 import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(FilesModule);
+  const app = await NestFactory.create(BrowserModule);
   const document = SwaggerModule.createDocument(
     app,
-    new DocumentBuilder().setTitle('Files API').build(),
+    new DocumentBuilder().setTitle('Browser API').build(),
   );
   SwaggerModule.setup('docs', app, document);
 

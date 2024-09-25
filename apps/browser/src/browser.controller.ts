@@ -6,19 +6,14 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { FilesService } from './files.service';
+import { BrowserService } from './browser.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
 
 @Controller()
-export class FilesController {
-  constructor(private readonly filesService: FilesService) {}
-
-  @Get()
-  getHello(): string {
-    return this.filesService.getHello();
-  }
+export class BrowserController {
+  constructor(private readonly browserService: BrowserService) {}
 
   @UseInterceptors(
     FileInterceptor('file', {
@@ -40,6 +35,6 @@ export class FilesController {
   })
   @Put('upload')
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
-    this.filesService.uploadFile(file);
+    this.browserService.uploadFile(file);
   }
 }
