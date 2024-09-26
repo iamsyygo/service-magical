@@ -10,10 +10,12 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Prisma } from '@prisma/client';
 import { compareSync, hashSync } from 'bcryptjs';
-import { REDIS_KEYS } from 'shared/constants';
+import { MINIO_CLIENT, REDIS_KEYS } from 'shared/constants';
 import { ChangePasswordDto, UserInputDto } from './dto/index.dto';
 import { JwtService } from '@nestjs/jwt';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Client } from 'minio';
+import { FileService } from '@app/file';
 
 @Injectable()
 export class UserService {
@@ -31,7 +33,9 @@ export class UserService {
 
   @Inject(JwtService)
   private jwtService: JwtService;
-  // constructor(private jwtService: JwtService) {}
+
+  @Inject(FileService)
+  private fileService: FileService;
 
   async createUser(data: Prisma.UserCreateInput & { captcha?: string }) {
     const captcha = await this.redisService.get(
