@@ -11,7 +11,7 @@ export const consoleAppName = (name: string, submoduleName?: string) => {
 
   figlet.text(
     text,
-    { font: 'Big', horizontalLayout: 'default', verticalLayout: 'default' },
+    { font: 'slant', horizontalLayout: 'default', verticalLayout: 'default' },
     (error, text) => {
       console.log(text);
     },
