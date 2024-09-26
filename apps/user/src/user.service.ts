@@ -20,22 +20,22 @@ import { FileService } from '@app/file';
 @Injectable()
 export class UserService {
   @Inject(PrismaService)
-  private prismaService: PrismaService;
+  private readonly prismaService: PrismaService;
 
   @Inject(RedisService)
-  redisService: RedisService;
+  private readonly redisService: RedisService;
 
   @Inject(EmailService)
-  private emailService: EmailService;
+  private readonly emailService: EmailService;
 
   @Inject(ConfigService)
-  private configService: ConfigService;
+  private readonly configService: ConfigService;
 
   @Inject(JwtService)
-  private jwtService: JwtService;
+  private readonly jwtService: JwtService;
 
   @Inject(FileService)
-  private fileService: FileService;
+  private readonly fileService: FileService;
 
   async createUser(data: Prisma.UserCreateInput & { captcha?: string }) {
     const captcha = await this.redisService.get(
