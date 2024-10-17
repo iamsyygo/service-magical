@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+    root:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: root_service
+        ports:
+            - "3000:3000"
+        environment:
+            - NODE_ENV=production
+
+    user:
+        build:
+            context: ./apps/user
+            dockerfile: Dockerfile
+        container_name: user_service
+        ports:
+            - "3001:3000"
+        environment:
+            - NODE_ENV=production
+
+    exam:
+        build:
+            context: ./apps/exam
+            dockerfile: Dockerfile
+        container_name: exam_service
+        ports:
+            - "3002:3000"
+        environment:
+            - NODE_ENV=production
+    # 其他微服务可以按照类似的方式添加
