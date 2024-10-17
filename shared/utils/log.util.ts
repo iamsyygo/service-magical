@@ -1,6 +1,4 @@
 import * as figlet from 'figlet';
-// import BigFont from 'figlet/importable-fonts/Big.js';
-// figlet.parseFont('Big', BigFont);
 
 export const consoleAppName = (name: string, submoduleName?: string) => {
   let text = name;
