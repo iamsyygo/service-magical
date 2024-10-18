@@ -28,6 +28,7 @@ export class AuthService {
 
   // 账号和密码验证策略
   async validateLocalUser(authInputDto: AuthInputDto) {
+    console.log(authInputDto);
     const { email, username, password, captcha } = authInputDto;
     if (!email && !username) {
       throw new BadRequestException('Email or username is required');
@@ -39,14 +40,14 @@ export class AuthService {
 
     const captchaLoginEnabled = this.configService.get(
       'REQUIRE_CAPTCHA_LOGIN',
-      true,
+      'true',
     );
 
     if (!captcha && captchaLoginEnabled) {
       throw new BadRequestException('Captcha is required');
     }
 
-    if (captchaLoginEnabled) {
+    if (JSON.parse(captchaLoginEnabled) === true) {
       const storedCaptcha = await this.redisService.get(
         REDIS_KEYS.REGISTER_CAPTCHA + `:${email}`,
       );
@@ -78,7 +79,7 @@ export class AuthService {
   }
 
   // 生成 Access Token
-  private createAccessToken(userId: number): string {
+  createAccessToken(userId: number): string {
     const payload = { sub: userId };
     const secret = this.configService.get('JWT_ACCESS_TOKEN_SECRET');
     const expiresIn = this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION');
@@ -87,7 +88,7 @@ export class AuthService {
   }
 
   // 生成刷新 Token
-  private createRefreshToken(userId: number): string {
+  createRefreshToken(userId: number): string {
     const payload = { sub: userId };
     const secret = this.configService.get('JWT_REFRESH_TOKEN_SECRET');
     const expiresIn = this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION');
