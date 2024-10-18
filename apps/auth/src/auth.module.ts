@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LocalStrategy } from './local-strategy';
+import { LocalStrategy } from './local.strategy';
 import { PrismaModule } from '@app/prisma';
 import { ConfigModule } from '@nestjs/config';
 import { RedisModule } from '@app/redis';

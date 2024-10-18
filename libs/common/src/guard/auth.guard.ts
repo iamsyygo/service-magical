@@ -17,11 +17,11 @@ interface JwtUserData {
   email?: string;
 }
 
-declare module 'express' {
-  interface Request {
-    user: JwtUserData;
-  }
-}
+// declare module 'express' {
+//   interface Request {
+//     user: JwtUserData;
+//   }
+// }
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -48,7 +48,7 @@ export class AuthGuard implements CanActivate {
     const authorization = request.headers.authorization;
 
     if (!authorization) {
-      throw new UnauthorizedException('用户未登录');
+      throw new UnauthorizedException('User is not logged in');
     }
 
     try {
@@ -62,7 +62,7 @@ export class AuthGuard implements CanActivate {
       };
       return true;
     } catch (e) {
-      throw new UnauthorizedException('令牌无效');
+      throw new UnauthorizedException('Token is invalid');
     }
   }
 }

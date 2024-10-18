@@ -8,14 +8,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { Prisma } from '@prisma/client';
 import { compareSync, hashSync } from 'bcryptjs';
-import { MINIO_CLIENT, REDIS_KEYS } from 'shared/constants';
+import { REDIS_KEYS } from 'shared/constants';
 import { ChangePasswordDto, UserInputDto } from './dto/index.dto';
-import { JwtService } from '@nestjs/jwt';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Client } from 'minio';
-import { FileService } from '@app/file';
 
 @Injectable()
 export class UserService {
@@ -34,19 +32,27 @@ export class UserService {
   @Inject(JwtService)
   private readonly jwtService: JwtService;
 
-  @Inject(FileService)
-  private readonly fileService: FileService;
-
   async createUser(data: Prisma.UserCreateInput & { captcha?: string }) {
     const captcha = await this.redisService.get(
       REDIS_KEYS.REGISTER_CAPTCHA + `:${data.email}`,
     );
+    const captchaRegisterEnabled = this.configService.get(
+      'REQUIRE_CAPTCHA_REGISTER',
+      'true',
+    );
 
-    if (!captcha) {
-      return new BadRequestException('验证码已过期');
+    if (!captcha && captchaRegisterEnabled) {
+      throw new BadRequestException('Captcha is required');
     }
-    if (captcha !== data.captcha) {
-      return new BadRequestException('验证码错误');
+
+    if (JSON.parse(captchaRegisterEnabled) === true) {
+      if (!captcha) {
+        throw new BadRequestException('Captcha is expired');
+      }
+
+      if (captcha !== data.captcha) {
+        throw new BadRequestException('Captcha is invalid');
+      }
     }
 
     const user = await this.prismaService.user.findUnique({
@@ -57,7 +63,7 @@ export class UserService {
     });
 
     if (user) {
-      return new BadRequestException('用户已存在');
+      return new BadRequestException('User already exists');
     }
 
     delete data.captcha;
@@ -113,9 +119,14 @@ export class UserService {
     });
   }
 
+  /**
+   * 登录
+   * @deprecated - 迁移至 Auth 模块
+   * @param {UserInputDto} body
+   * @returns
+   */
   async signin(body: UserInputDto) {
     console.log(body);
-    // UserInputDto
     const { email, username, password, captcha } = body;
 
     if (!email && !username) {
@@ -171,7 +182,12 @@ export class UserService {
     };
   }
 
-  // 生成 Access Token
+  /**
+   * 生成 Access Token
+   * @deprecated - 迁移至 Auth 模块
+   * @param {number} userId
+   * @returns
+   */
   private createAccessToken(userId: number): string {
     const payload = { sub: userId };
     const secret = this.configService.get('JWT_ACCESS_TOKEN_SECRET');
@@ -180,7 +196,12 @@ export class UserService {
     return 'Bearer ' + this.jwtService.sign(payload, { secret, expiresIn });
   }
 
-  // 生成刷新 Token
+  /**
+   * 生成刷新 Token
+   * @deprecated - 迁移至 Auth 模块
+   * @param {number} userId
+   * @returns
+   */
   private createRefreshToken(userId: number): string {
     const payload = { sub: userId };
     const secret = this.configService.get('JWT_REFRESH_TOKEN_SECRET');
@@ -189,7 +210,12 @@ export class UserService {
     return 'Bearer ' + this.jwtService.sign(payload, { secret, expiresIn });
   }
 
-  // 刷新令牌
+  /**
+   * 刷新令牌
+   * @deprecated - 迁移至 Auth 模块
+   * @param {any} body
+   * @returns
+   */
   async refreshToken(body: { accessToken: string; refreshToken: string }) {
     let { accessToken = '', refreshToken = '' } = body;
     accessToken = accessToken.split(' ').pop();

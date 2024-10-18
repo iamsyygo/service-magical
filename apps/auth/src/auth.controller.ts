@@ -7,13 +7,11 @@ import { Prisma } from '@prisma/client';
 import { RedisService } from '@app/redis';
 import { REDIS_KEYS } from 'shared/constants';
 
-// declare global {
-//   namespace Express {
-//     interface Request {
-//       user?: any;
-//     }
-//   }
-// }
+declare module 'express' {
+  interface Request {
+    user?: Partial<Prisma.UserCreateManyInput>;
+  }
+}
 
 @ApiTags('认证相关模块')
 @Controller('auth')
