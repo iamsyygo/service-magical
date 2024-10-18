@@ -115,6 +115,7 @@ export class UserService {
 
   async signin(body: UserInputDto) {
     console.log(body);
+    // UserInputDto
     const { email, username, password, captcha } = body;
 
     if (!email && !username) {
