@@ -14,29 +14,47 @@ datasource db {
 }
 
 enum Sex {
+  MALE
   GIRL
-  MAN
   UNKNOWN
 }
 
-enum Platform {
-  LOCAL
-  GITHUB
-  GOOGLE
+
+enum Provider {
+  LOCAL @map("local")
+  GITHUB @map("github")
+  GOOGLE @map("google")
 }
 
 model User {
   id        Int       @id @default(autoincrement())
   username  String    @unique
   password  String    @db.VarChar(100)
-  createdAt DateTime  @default(now()) @db.Timestamp(6)
-  updatedAt DateTime? @updatedAt @db.Timestamp(6)
+  createdAt DateTime  @default(now()) @db.Timestamp(6) @map("created_at")
+  updatedAt DateTime? @updatedAt @db.Timestamp(6) @map("updated_at")
   avatar    String?   @db.VarChar(255)
   sex       Sex       @default(UNKNOWN)
   email     String    @unique
-  platform  Platform  @default(LOCAL)
+  platform  Provider  @default(LOCAL)
+  userProviderId Int? @map("user_provider_id")
 
   @@map("system_user")
+}
+
+
+
+model UserProvider {
+  id           Int      @id @default(autoincrement())
+  userId       Int     @map("user_id")
+  provider     Provider @map("provider")
+  providerId   String  @map("provider_id")
+  // accessToken  String? 
+  // refreshToken String? 
+  callbackData Json?   @map("callback_data")
+  createdAt    DateTime @default(now()) @db.Timestamp(6) @map("created_at")
+  updatedAt    DateTime @updatedAt @db.Timestamp(6) @map("updated_at")
+
+  @@map("user_provider")
 }
 
 enum FromType {

@@ -1,4 +1,4 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
@@ -6,6 +6,7 @@ import { AuthInputDto } from './dto/index.dto';
 import { Prisma } from '@prisma/client';
 import { RedisService } from '@app/redis';
 import { REDIS_KEYS } from 'shared/constants';
+import { UnwantedAuthenticate } from '@app/common/decorator/unwanted-authenticate.decorator';
 
 declare module 'express' {
   interface Request {
@@ -27,6 +28,7 @@ export class AuthController {
     status: 200,
     description: '登录成功',
   })
+  @UnwantedAuthenticate()
   @Post('signin')
   @UseGuards(AuthGuard('local'))
   async signin(@Req() req: Request) {
@@ -35,14 +37,24 @@ export class AuthController {
     const refreshToken = this.authService.createRefreshToken(user.id);
 
     delete user.password;
-
     this.redisService.del(REDIS_KEYS.SIGNIN_CAPTCHA + `:${user.email}`);
 
-    // 返回用户信息、生成 JWT 等
     return {
       user,
       accessToken,
       refreshToken,
     };
+  }
+
+  @Get('signinWithGithub')
+  @UseGuards(AuthGuard('github'))
+  @UnwantedAuthenticate()
+  async login() {}
+
+  @Get('github/callback')
+  @UnwantedAuthenticate()
+  @UseGuards(AuthGuard('github'))
+  async authCallback(@Req() req) {
+    return req.user;
   }
 }

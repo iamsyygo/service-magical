@@ -70,7 +70,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('User not found');
+      throw new BadRequestException('User not found');
     }
 
     const isPasswordValid = compareSync(password, user.password);

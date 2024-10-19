@@ -6,9 +6,10 @@ import { ConfigModule } from '@nestjs/config';
 import { RedisModule } from '@app/redis';
 import { CommonModule } from '@app/common';
 import { AuthController } from './auth.controller';
+import { GithubStrategy } from './github.strategy';
 
 @Module({
-  providers: [AuthService, LocalStrategy],
+  providers: [AuthService, LocalStrategy, GithubStrategy],
   imports: [ConfigModule.forRoot(), CommonModule, RedisModule, PrismaModule],
   controllers: [AuthController],
   exports: [AuthService],

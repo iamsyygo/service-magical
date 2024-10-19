@@ -29,6 +29,7 @@ async function bootstrap() {
     }),
   );
 
+  app.setGlobalPrefix('api');
   app.enableCors();
   const document = SwaggerModule.createDocument(
     app,
@@ -36,7 +37,11 @@ async function bootstrap() {
   );
   SwaggerModule.setup('docs', app, document);
 
-  const port: number = 8002;
+  const currentModule = basename(resolve(__dirname));
+  const port: number = configService.get(
+    currentModule.toLocaleUpperCase() + '_PORT',
+    8031,
+  );
 
   app.enableCors();
   await app.listen(port);
@@ -45,7 +50,6 @@ async function bootstrap() {
   const localAddress = `   Local: \n   - ${local}`;
   const networkAddress = `   Network: \n   - ${network.join('\n   - ')}`;
   const message = `\n\n${localAddress}\n\n${networkAddress}\n`;
-  const currentModule = basename(resolve(__dirname));
   Logger.verbose(message, 'App run at');
   consoleAppName(configService.get('APP_NAME'), currentModule);
 }
