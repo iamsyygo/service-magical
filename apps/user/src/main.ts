@@ -11,12 +11,12 @@ import { basename, resolve } from 'path';
 async function bootstrap() {
   const app = await NestFactory.create(UserModule);
 
-  app.connectMicroservice({
-    transport: Transport.TCP,
-    options: {
-      port: 8089,
-    },
-  });
+  // app.connectMicroservice({
+  //   transport: Transport.TCP,
+  //   options: {
+  //     port: 8089,
+  //   },
+  // });
 
   const configService = app.get(ConfigService);
 
@@ -36,7 +36,7 @@ async function bootstrap() {
   );
   SwaggerModule.setup('docs', app, document);
 
-  const port: number = 8001;
+  const port: number = 8002;
 
   app.enableCors();
   await app.listen(port);

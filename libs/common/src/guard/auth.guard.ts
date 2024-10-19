@@ -5,23 +5,12 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { Observable } from 'rxjs';
 import { EXCLUDE_JWT_VERIFICATION } from 'shared/constants';
-
-interface JwtUserData {
-  id: number;
-  username?: string;
-  email?: string;
-}
-
-// declare module 'express' {
-//   interface Request {
-//     user: JwtUserData;
-//   }
-// }
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -30,6 +19,9 @@ export class AuthGuard implements CanActivate {
 
   @Inject(JwtService)
   private jwtService: JwtService;
+
+  @Inject(ConfigService)
+  private readonly configService: ConfigService;
 
   canActivate(
     context: ExecutionContext,
@@ -53,12 +45,17 @@ export class AuthGuard implements CanActivate {
 
     try {
       const accessToken = authorization.split(' ').pop();
-      const data = this.jwtService.verify<JwtUserData>(accessToken);
+      const secret = this.configService.get('JWT_ACCESS_TOKEN_SECRET');
+      const data = this.jwtService.verify<{
+        sub: number;
+        iat: number;
+        exp: number;
+      }>(accessToken, {
+        secret,
+      });
 
       request.user = {
-        id: data.id,
-        username: data.username,
-        email: data.email,
+        id: data.sub,
       };
       return true;
     } catch (e) {

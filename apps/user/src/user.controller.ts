@@ -64,7 +64,7 @@ export class UserController {
     return this.userService.getUserWithWhere({ id });
   }
 
-  @ApiOperation({ summary: '登录' })
+  @ApiOperation({ summary: '登录', deprecated: true })
   @ApiBody({ type: UserInputDto })
   @Post('signin')
   @UnwantedAuthenticate()
@@ -73,7 +73,7 @@ export class UserController {
     return this.userService.signin(body);
   }
 
-  @ApiOperation({ summary: '刷新令牌' })
+  @ApiOperation({ summary: '刷新令牌', deprecated: true })
   @ApiBody({
     schema: {
       type: 'object',

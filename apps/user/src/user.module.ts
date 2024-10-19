@@ -1,14 +1,12 @@
 import { CommonModule } from '@app/common';
-import { AuthGuard } from '@app/common/guard/auth.guard';
 import { EmailModule } from '@app/email';
+import { FileModule } from '@app/file';
 import { PrismaModule } from '@app/prisma';
 import { RedisModule } from '@app/redis';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import { FileModule } from '@app/file';
 
 @Module({
   imports: [
@@ -20,6 +18,7 @@ import { FileModule } from '@app/file';
     FileModule,
   ],
   controllers: [UserController],
-  providers: [UserService, { provide: APP_GUARD, useClass: AuthGuard }],
+  // providers: [UserService, { provide: APP_GUARD, useClass: AuthGuard }],
+  providers: [UserService],
 })
 export class UserModule {}

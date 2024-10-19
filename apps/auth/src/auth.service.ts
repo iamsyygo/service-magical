@@ -28,7 +28,6 @@ export class AuthService {
 
   // 账号和密码验证策略
   async validateLocalUser(authInputDto: AuthInputDto) {
-    console.log(authInputDto);
     const { email, username, password, captcha } = authInputDto;
     if (!email && !username) {
       throw new BadRequestException('Email or username is required');
@@ -38,16 +37,19 @@ export class AuthService {
       throw new BadRequestException('Password is required');
     }
 
-    const captchaLoginEnabled = this.configService.get(
-      'REQUIRE_CAPTCHA_LOGIN',
-      'true',
-    );
+    let captchaLoginEnabled = true;
+
+    try {
+      captchaLoginEnabled = JSON.parse(
+        this.configService.get('REQUIRE_CAPTCHA_LOGIN'),
+      );
+    } catch (error) {}
 
     if (!captcha && captchaLoginEnabled) {
       throw new BadRequestException('Captcha is required');
     }
 
-    if (JSON.parse(captchaLoginEnabled) === true) {
+    if (captchaLoginEnabled) {
       const storedCaptcha = await this.redisService.get(
         REDIS_KEYS.REGISTER_CAPTCHA + `:${email}`,
       );

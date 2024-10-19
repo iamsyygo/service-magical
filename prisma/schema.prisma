@@ -19,6 +19,12 @@ enum Sex {
   UNKNOWN
 }
 
+enum Platform {
+  LOCAL
+  GITHUB
+  GOOGLE
+}
+
 model User {
   id        Int       @id @default(autoincrement())
   username  String    @unique
@@ -28,6 +34,7 @@ model User {
   avatar    String?   @db.VarChar(255)
   sex       Sex       @default(UNKNOWN)
   email     String    @unique
+  platform  Platform  @default(LOCAL)
 
   @@map("system_user")
 }
