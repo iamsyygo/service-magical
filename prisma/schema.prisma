@@ -35,9 +35,7 @@ model User {
   avatar    String?   @db.VarChar(255)
   sex       Sex       @default(UNKNOWN)
   email     String    @unique
-  platform  Provider  @default(LOCAL)
-  userProviderId Int? @map("user_provider_id")
-
+  
   @@map("system_user")
 }
 
@@ -45,7 +43,7 @@ model User {
 
 model UserProvider {
   id           Int      @id @default(autoincrement())
-  userId       Int     @map("user_id")
+  userId       Int?     @map("user_id")
   provider     Provider @map("provider")
   providerId   String  @map("provider_id")
   // accessToken  String? 

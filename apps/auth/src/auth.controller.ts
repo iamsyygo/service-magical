@@ -55,6 +55,15 @@ export class AuthController {
   @UnwantedAuthenticate()
   @UseGuards(AuthGuard('github'))
   async authCallback(@Req() req) {
-    return req.user;
+    const { user } = req as Request & { user?: Prisma.UserCreateManyInput };
+    const accessToken = this.authService.createAccessToken(user.id);
+    const refreshToken = this.authService.createRefreshToken(user.id);
+
+    delete user.password;
+    return {
+      user,
+      accessToken,
+      refreshToken,
+    };
   }
 }

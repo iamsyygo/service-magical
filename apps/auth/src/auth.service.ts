@@ -11,6 +11,8 @@ import { compareSync } from 'bcryptjs';
 import { REDIS_KEYS } from 'shared/constants';
 import { AuthInputDto } from './dto/index.dto';
 import { JwtService } from '@nestjs/jwt';
+import { ProfileType } from './types/github';
+import { Provider } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -130,43 +132,52 @@ export class AuthService {
     }
   }
 
-  // async changePassword(data: ChangePasswordDto) {
-  //   const { email, oldPassword, newPassword, captcha } = data;
+  async validateGithubUser(profile: ProfileType) {
+    const { id, username } = profile;
+    const userProvider = await this.prismaService.userProvider.findFirst({
+      where: {
+        providerId: id,
+        provider: Provider.GITHUB,
+      },
+      // 表示同时查询 user 表中的数据
+      // include: {
+      //   user: true,
+      // },
+    });
 
-  //   const storedCaptcha = await this.redisService.get(
-  //     REDIS_KEYS.UPDATE_USER_PASSWORD + `:${email}`,
-  //   );
+    if (!userProvider) {
+      // 使用github登录时，如果用户不存在自动创建用户
 
-  //   if (!storedCaptcha) {
-  //     throw new BadRequestException('验证码已过期');
-  //   }
+      const _profileJson = JSON.parse(
+        JSON.stringify(profile._json),
+      ) as ProfileType['_json'];
 
-  //   if (storedCaptcha !== captcha) {
-  //     throw new BadRequestException('验证码错误');
-  //   }
+      const newUser = await this.prismaService.user.create({
+        data: {
+          username: username,
+          email: _profileJson.email || '',
+          password: '',
+          avatar: _profileJson.avatar_url,
+        },
+      });
 
-  //   const user = await this.prismaService.user.findUnique({
-  //     where: { email },
-  //   });
+      const newUserProvider = await this.prismaService.userProvider.create({
+        data: {
+          userId: newUser.id,
+          provider: Provider.GITHUB,
+          providerId: id,
+          callbackData: JSON.stringify(profile),
+        },
+      });
+      return newUser;
+    } else {
+      const existUser = await this.prismaService.user.findUnique({
+        where: {
+          id: userProvider.userId,
+        },
+      });
 
-  //   if (!user) {
-  //     throw new BadRequestException('用户不存在');
-  //   }
-
-  //   // 验证旧密码
-  //   const isOldPasswordValid = compareSync(oldPassword, user.password);
-  //   if (!isOldPasswordValid) {
-  //     throw new BadRequestException('旧密码错误');
-  //   }
-
-  //   const hashedNewPassword = hashSync(newPassword, 10);
-  //   await this.prismaService.user.update({
-  //     where: { email },
-  //     data: { password: hashedNewPassword },
-  //   });
-
-  //   await this.redisService.del(REDIS_KEYS.UPDATE_USER_PASSWORD + `:${email}`);
-
-  //   return true;
-  // }
+      return existUser;
+    }
+  }
 }
