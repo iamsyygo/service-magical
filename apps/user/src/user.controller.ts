@@ -21,12 +21,13 @@ export class UserController {
   @UnwantedAuthenticate()
   @MessagePattern('user:create')
   createUser(@Body() body: Prisma.UserCreateInput) {
+    throw new Error();
     return this.userService.createUser(body);
   }
 
   @ApiOperation({ summary: '发送注册验证码' })
   @ApiBody({ type: CreateUserDto })
-  @Post('send_register_captcha')
+  @Post('sendRegisterCaptcha')
   @UnwantedAuthenticate()
   @MessagePattern('user:send_register_captcha')
   sendRegisterCaptcha(@Body() body: Prisma.UserCreateInput) {
@@ -35,7 +36,7 @@ export class UserController {
 
   @ApiOperation({ summary: '发送登录证码' })
   @ApiBody({ type: CreateUserDto })
-  @Post('send_signin_captcha')
+  @Post('sendSigninCaptcha')
   @UnwantedAuthenticate()
   @MessagePattern('user:send_signin_captcha')
   sendSigninCaptcha(@Body() body: Prisma.UserCreateInput) {
@@ -51,14 +52,14 @@ export class UserController {
       },
     },
   })
-  @Post('send_update_password_captcha')
+  @Post('sendUpdatePasswordCaptcha')
   @MessagePattern('user:sent_update_password_captcha')
   sendUpdatePasswordCaptcha(@Body() body: Prisma.UserCreateInput) {
     return this.userService.sendCaptcha(body, REDIS_KEYS.UPDATE_USER_PASSWORD);
   }
 
   @ApiOperation({ summary: '根据 ID 查询用户' })
-  @Patch('find_by_id/:id')
+  @Patch('findById/:id')
   @MessagePattern('user:find_by_id')
   async findById(@Param('id') id: any) {
     return this.userService.getUserWithWhere({ id });
@@ -83,7 +84,7 @@ export class UserController {
       },
     },
   })
-  @Post('refresh_token')
+  @Post('refreshToken')
   @UnwantedAuthenticate()
   @MessagePattern('user:refresh_token')
   refreshToken(@Body() body: { refreshToken: string; accessToken: string }) {
@@ -92,7 +93,7 @@ export class UserController {
 
   @ApiOperation({ summary: '修改密码' })
   @ApiBody({ type: ChangePasswordDto })
-  @Post('change_password')
+  @Post('changePassword')
   @MessagePattern('user:change_password')
   changePassword(@Body() body: ChangePasswordDto) {
     return this.userService.changePassword(body);
