@@ -11,6 +11,7 @@ import {
 import { MenuService } from './menu.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { UnwantedAuthenticate } from '@app/common/decorator/unwanted-authenticate.decorator';
 
 @ApiTags('菜单管理')
 @Controller('menu')
@@ -24,6 +25,7 @@ export class MenuController {
   }
 
   @Get('tree')
+  @UnwantedAuthenticate()
   @ApiOperation({ summary: '获取菜单树' })
   getMenuTree() {
     return this.menuService.getMenuTree();

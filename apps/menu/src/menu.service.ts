@@ -60,10 +60,20 @@ export class MenuService {
 
     // Step 2: 递归构建树，利用映射快速查找子节点
     const buildTree = (parentId: number | null): any[] => {
-      return (menuMap.get(parentId) || []).map((menu) => ({
-        ...menu,
-        children: buildTree(menu.id),
-      }));
+      const treeByParentId = menuMap.get(parentId);
+      if (!treeByParentId) return null;
+
+      return treeByParentId.map((menu) => {
+        const children = buildTree(menu.id);
+        const result = {
+          ...menu,
+        };
+        if (children) {
+          // @ts-expect-error
+          result.children = children;
+        }
+        return result;
+      });
     };
 
     return buildTree(parentId);
