@@ -8,87 +8,96 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// 数据源配置
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
+// 性别枚举
 enum Sex {
-  MALE
-  GIRL
-  UNKNOWN
+  MALE // 男
+  GIRL // 女
+  UNKNOWN // 未知
 }
 
+// 第三方登录提供商枚举
 enum Provider {
-  LOCAL  @map("local")
-  GITHUB @map("github")
-  GOOGLE @map("google")
+  LOCAL  @map("local") // 本地
+  GITHUB @map("github") // GitHub
+  GOOGLE @map("google") // Google
 }
 
+// 用户模型
 model User {
   id        Int        @id @default(autoincrement())
-  username  String     @unique
-  password  String     @db.VarChar(100)
-  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt DateTime?  @updatedAt @map("updated_at") @db.Timestamp(6)
-  avatar    String?    @db.VarChar(255)
-  sex       Sex        @default(UNKNOWN)
-  email     String     @unique
-  UserRole  UserRole[]
+  username  String     @unique // 用户名
+  password  String     @db.VarChar(100) // 密码
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamp(6) // 创建时间
+  updatedAt DateTime?  @updatedAt @map("updated_at") @db.Timestamp(6) // 更新时间
+  avatar    String?    @db.VarChar(255) // 头像
+  sex       Sex        @default(UNKNOWN) // 性别
+  email     String     @unique // 邮箱
+  UserRole  UserRole[] // 用户角色关联
 
   @@map("system_user")
 }
 
+// 用户第三方登录信息模型
 model UserProvider {
   id           Int      @id @default(autoincrement())
-  userId       Int?     @map("user_id")
-  provider     Provider @map("provider")
-  providerId   String   @map("provider_id")
-  callbackData Json?    @map("callback_data")
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamp(6)
+  userId       Int?     @map("user_id") // 用户ID
+  provider     Provider @map("provider") // 提供商类型
+  providerId   String   @map("provider_id") // 提供商用户ID
+  callbackData Json?    @map("callback_data") // 回调数据
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp(6) // 创建时间
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamp(6) // 更新时间
 
   @@map("user_provider")
 }
 
+// 表单类型枚举
 enum FromType {
-  INPUT
-  SELECT
-  RADIO
-  CHECKBOX
-  DATE
-  TIME
-  DATETIME
-  TEXTAREA
-  DEFAULT
-  CUSTOM
+  INPUT // 输入框
+  SELECT // 下拉框
+  RADIO // 单选框
+  CHECKBOX // 复选框
+  DATE // 日期
+  TIME // 时间
+  DATETIME // 日期时间
+  TEXTAREA // 文本域
+  DEFAULT // 默认
+  CUSTOM // 自定义
 }
 
+// 书签库模型
 model BookmarksVault {
   id          Int       @id @default(autoincrement())
-  createdAt   DateTime  @default(now()) @db.Timestamp(6)
-  updatedAt   DateTime? @updatedAt @db.Timestamp(6)
-  title       String    @db.VarChar(200)
-  originTitle String?   @map("origin_title") @db.VarChar(200)
-  defTitle    String?   @map("def_title") @db.VarChar(200)
-  url         String    @db.VarChar(800)
-  addDate     Int       @map("add_date")
-  icon        String?   @db.Text
-  html        String?   @db.Text
-  text        String?   @db.Text
-  isHandled   Boolean?  @default(false) @map("is_handled")
-  describes   String?   @db.VarChar(500)
-  types       String?   @db.VarChar(100)
+  createdAt   DateTime  @default(now()) @db.Timestamp(6) // 创建时间
+  updatedAt   DateTime? @updatedAt @db.Timestamp(6) // 更新时间
+  title       String    @db.VarChar(200) // 标题
+  originTitle String?   @map("origin_title") @db.VarChar(200) // 原始标题
+  defTitle    String?   @map("def_title") @db.VarChar(200) // 默认标题
+  url         String    @db.VarChar(800) // URL
+  addDate     Int       @map("add_date") // 添加日期
+  icon        String?   @db.Text // 图标
+  html        String?   @db.Text // HTML内容
+  text        String?   @db.Text // 文本内容
+  isHandled   Boolean?  @default(false) @map("is_handled") // 是否已处理
+  describes   String?   @db.VarChar(500) // 描述
+  types       String?   @db.VarChar(100) // 类型
 
   @@map("bookmarks_vault")
 }
 
+// 菜单类型枚举
 enum MenuType {
   DIRECTORY @map("directory") // 目录
   MENU      @map("menu") // 菜单
   BUTTON    @map("button") // 按钮
 }
 
+// 菜单模型
 model Menu {
   id         Int        @id @default(autoincrement())
   parentId   Int?       @map("parent_id") // 父菜单ID
@@ -103,50 +112,53 @@ model Menu {
   isExternal Boolean    @default(false) @map("is_external") // 是否外链
   isCache    Boolean    @default(false) @map("is_cache") // 是否缓存
   isVisible  Boolean    @default(true) @map("is_visible") // 是否可见
-  createdAt  DateTime   @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt  DateTime?  @updatedAt @map("updated_at") @db.Timestamp(6)
-  RoleMenu   RoleMenu[]
+  createdAt  DateTime   @default(now()) @map("created_at") @db.Timestamp(6) // 创建时间
+  updatedAt  DateTime?  @updatedAt @map("updated_at") @db.Timestamp(6) // 更新时间
+  RoleMenu   RoleMenu[] // 角色菜单关联
 
   @@map("system_menu")
 }
 
+// 角色模型
 model Role {
   id        Int       @id @default(autoincrement())
   name      String    @db.VarChar(50) // 角色名称
   code      String    @unique @db.VarChar(50) // 角色标识
   status    Boolean   @default(true) // 角色状态
   remark    String?   @db.VarChar(200) // 备注
-  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamp(6) // 创建时间
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamp(6) // 更新时间
 
   // 关联表
-  users UserRole[]
-  menus RoleMenu[]
+  users UserRole[] // 用户角色关联
+  menus RoleMenu[] // 角色菜单关联
 
   @@map("system_role")
 }
 
+// 用户角色关联模型
 model UserRole {
   id        Int      @id @default(autoincrement())
-  userId    Int      @map("user_id")
-  roleId    Int      @map("role_id")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  userId    Int      @map("user_id") // 用户ID
+  roleId    Int      @map("role_id") // 角色ID
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6) // 创建时间
 
-  role Role @relation(fields: [roleId], references: [id])
-  user User @relation(fields: [userId], references: [id])
+  role Role @relation(fields: [roleId], references: [id]) // 角色关联
+  user User @relation(fields: [userId], references: [id]) // 用户关联
 
   @@unique([userId, roleId])
   @@map("system_user_role")
 }
 
+// 角色菜单关联模型
 model RoleMenu {
   id        Int      @id @default(autoincrement())
-  roleId    Int      @map("role_id")
-  menuId    Int      @map("menu_id")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  roleId    Int      @map("role_id") // 角色ID
+  menuId    Int      @map("menu_id") // 菜单ID
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6) // 创建时间
 
-  role Role @relation(fields: [roleId], references: [id])
-  menu Menu @relation(fields: [menuId], references: [id])
+  role Role @relation(fields: [roleId], references: [id]) // 角色关联
+  menu Menu @relation(fields: [menuId], references: [id]) // 菜单关联
 
   @@unique([roleId, menuId])
   @@map("system_role_menu")
