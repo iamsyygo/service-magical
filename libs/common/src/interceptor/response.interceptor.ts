@@ -23,6 +23,7 @@ export class AppResponseInterceptor implements NestInterceptor {
           message: 'success',
           timestamp: +Date.now(),
           uri: request.url,
+          succeed: true,
         });
       }),
     );

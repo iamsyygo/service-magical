@@ -21,12 +21,12 @@ export class AppExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus?.() || HttpStatus.INTERNAL_SERVER_ERROR;
     const request = ctx.getRequest();
     const response = ctx.getResponse();
-
     const result = {
       timestamp: +new Date(),
       code: status,
       uri: request.url,
       error: exception.message || 'Unknown Error',
+      succeed: false,
     };
     if (exception instanceof HttpException) {
       const response = exception.getResponse?.();

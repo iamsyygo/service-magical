@@ -32,7 +32,6 @@ export class AuthGuard implements CanActivate {
       EXCLUDE_JWT_VERIFICATION,
       [context.getClass(), context.getHandler()],
     );
-
     if (unwantedAuthenticate) {
       return true;
     }

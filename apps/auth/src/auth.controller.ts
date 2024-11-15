@@ -1,4 +1,12 @@
-import { Controller, Get, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
@@ -7,6 +15,7 @@ import { Prisma } from '@prisma/client';
 import { RedisService } from '@app/redis';
 import { REDIS_KEYS } from 'shared/constants';
 import { UnwantedAuthenticate } from '@app/common/decorator/unwanted-authenticate.decorator';
+import { MessagePattern } from '@nestjs/microservices';
 
 declare module 'express' {
   interface Request {
@@ -65,5 +74,22 @@ export class AuthController {
       accessToken,
       refreshToken,
     };
+  }
+
+  @ApiOperation({ summary: '刷新令牌' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        refreshToken: { type: 'string', description: '刷新令牌' },
+        accessToken: { type: 'string', description: '访问令牌' },
+      },
+    },
+  })
+  @Post('refreshToken')
+  @UnwantedAuthenticate()
+  @MessagePattern('user:refresh_token')
+  refreshToken(@Body() body: { refreshToken: string; accessToken: string }) {
+    return this.authService.refreshToken(body);
   }
 }

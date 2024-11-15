@@ -36,16 +36,15 @@ export class UserService {
     const captcha = await this.redisService.get(
       REDIS_KEYS.REGISTER_CAPTCHA + `:${data.email}`,
     );
-    const captchaRegisterEnabled = this.configService.get(
-      'REQUIRE_CAPTCHA_REGISTER',
-      'true',
+    const captchaRegisterEnabled = JSON.parse(
+      this.configService.get('REQUIRE_CAPTCHA_REGISTER', 'true'),
     );
 
     if (!captcha && captchaRegisterEnabled) {
       throw new BadRequestException('Captcha is required');
     }
 
-    if (JSON.parse(captchaRegisterEnabled) === true) {
+    if (captchaRegisterEnabled === true) {
       if (!captcha) {
         throw new BadRequestException('Captcha is expired');
       }

@@ -21,7 +21,6 @@ export class UserController {
   @UnwantedAuthenticate()
   @MessagePattern('user:create')
   createUser(@Body() body: Prisma.UserCreateInput) {
-    throw new Error();
     return this.userService.createUser(body);
   }
 

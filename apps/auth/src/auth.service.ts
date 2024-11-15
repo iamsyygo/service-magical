@@ -31,8 +31,11 @@ export class AuthService {
   // 账号和密码验证策略
   async validateLocalUser(authInputDto: AuthInputDto) {
     const { email, username, password, captcha } = authInputDto;
-    if (!email && !username) {
-      throw new BadRequestException('Email or username is required');
+    // if (!email && !username) {
+    //   throw new BadRequestException('Email or username is required');
+    // }
+    if (!email) {
+      throw new BadRequestException('Email is required');
     }
 
     if (!password) {
@@ -67,7 +70,7 @@ export class AuthService {
     const user = await this.prismaService.user.findUnique({
       where: {
         email: email,
-        username: username,
+        // username: username,
       },
     });
 
