@@ -10,13 +10,6 @@ import { consoleAppName } from 'shared/utils/log.util';
 async function bootstrap() {
   const app = await NestFactory.create(MenuModule);
 
-  // app.connectMicroservice({
-  //   transport: Transport.TCP,
-  //   options: {
-  //     port: 8079,
-  //   },
-  // });
-
   const configService = app.get(ConfigService);
 
   await app.startAllMicroservices();

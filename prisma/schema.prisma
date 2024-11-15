@@ -26,14 +26,15 @@ enum Provider {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  username  String    @unique
-  password  String    @db.VarChar(100)
-  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
-  avatar    String?   @db.VarChar(255)
-  sex       Sex       @default(UNKNOWN)
-  email     String    @unique
+  id        Int        @id @default(autoincrement())
+  username  String     @unique
+  password  String     @db.VarChar(100)
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime?  @updatedAt @map("updated_at") @db.Timestamp(6)
+  avatar    String?    @db.VarChar(255)
+  sex       Sex        @default(UNKNOWN)
+  email     String     @unique
+  UserRole  UserRole[]
 
   @@map("system_user")
 }
@@ -89,21 +90,64 @@ enum MenuType {
 }
 
 model Menu {
-  id         Int       @id @default(autoincrement())
-  parentId   Int?      @map("parent_id") // 父菜单ID
-  name       String    @db.VarChar(50) // 菜单名称
-  path       String?   @db.VarChar(200) // 路由路径
-  component  String?   @db.VarChar(255) // 组件路径
-  permission String?   @db.VarChar(100) // 权限标识
-  type       MenuType  @default(MENU) // 菜单类型
-  icon       String?   @db.VarChar(100) // 图标
-  orderNum   Int       @default(0) @map("order_num") // 显示顺序
-  status     Boolean   @default(true) // 菜单状态
-  isExternal Boolean   @default(false) @map("is_external") // 是否外链
-  isCache    Boolean   @default(false) @map("is_cache") // 是否缓存
-  isVisible  Boolean   @default(true) @map("is_visible") // 是否可见
-  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt  DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
+  id         Int        @id @default(autoincrement())
+  parentId   Int?       @map("parent_id") // 父菜单ID
+  name       String     @db.VarChar(50) // 菜单名称
+  path       String?    @db.VarChar(200) // 路由路径
+  component  String?    @db.VarChar(255) // 组件路径
+  permission String?    @db.VarChar(100) // 权限标识
+  type       MenuType   @default(MENU) // 菜单类型
+  icon       String?    @db.VarChar(100) // 图标
+  orderNum   Int        @default(0) @map("order_num") // 显示顺序
+  status     Boolean    @default(true) // 菜单状态
+  isExternal Boolean    @default(false) @map("is_external") // 是否外链
+  isCache    Boolean    @default(false) @map("is_cache") // 是否缓存
+  isVisible  Boolean    @default(true) @map("is_visible") // 是否可见
+  createdAt  DateTime   @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt  DateTime?  @updatedAt @map("updated_at") @db.Timestamp(6)
+  RoleMenu   RoleMenu[]
 
   @@map("system_menu")
+}
+
+model Role {
+  id        Int       @id @default(autoincrement())
+  name      String    @db.VarChar(50) // 角色名称
+  code      String    @unique @db.VarChar(50) // 角色标识
+  status    Boolean   @default(true) // 角色状态
+  remark    String?   @db.VarChar(200) // 备注
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  // 关联表
+  users UserRole[]
+  menus RoleMenu[]
+
+  @@map("system_role")
+}
+
+model UserRole {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  roleId    Int      @map("role_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  role Role @relation(fields: [roleId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([userId, roleId])
+  @@map("system_user_role")
+}
+
+model RoleMenu {
+  id        Int      @id @default(autoincrement())
+  roleId    Int      @map("role_id")
+  menuId    Int      @map("menu_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  role Role @relation(fields: [roleId], references: [id])
+  menu Menu @relation(fields: [menuId], references: [id])
+
+  @@unique([roleId, menuId])
+  @@map("system_role_menu")
 }

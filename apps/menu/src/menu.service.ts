@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@app/prisma';
-import { CreateMenuDto } from './dto/create-menu.dto';
+import { Injectable } from '@nestjs/common';
 import { Menu } from '@prisma/client';
+import { CreateMenuDto } from './dto/create-menu.dto';
 
 @Injectable()
 export class MenuService {
@@ -77,5 +77,73 @@ export class MenuService {
     };
 
     return buildTree(parentId);
+  }
+
+  // 获取用户的菜单权限
+  async getUserMenus(userId: number) {
+    // 获取用户的所有角色ID
+    const userRoles = await this.prisma.userRole.findMany({
+      where: { userId },
+      select: { roleId: true },
+    });
+
+    const roleIds = userRoles.map((ur) => ur.roleId);
+
+    // 获取这些角色关联的所有菜单
+    const roleMenus = await this.prisma.roleMenu.findMany({
+      where: {
+        roleId: {
+          in: roleIds,
+        },
+      },
+      include: {
+        menu: true,
+      },
+    });
+
+    // 提取菜单并去重
+    const menuMap = new Map();
+    roleMenus.forEach((rm) => {
+      if (!menuMap.has(rm.menu.id)) {
+        menuMap.set(rm.menu.id, rm.menu);
+      }
+    });
+
+    const menus = Array.from(menuMap.values());
+    return this.buildMenuTree(menus);
+  }
+
+  // 获取角色的菜单权限
+  async getRoleMenus(roleId: number) {
+    const roleMenus = await this.prisma.roleMenu.findMany({
+      where: { roleId },
+      include: {
+        menu: true,
+      },
+    });
+
+    const menus = roleMenus.map((rm) => rm.menu);
+    return this.buildMenuTree(menus);
+  }
+
+  // 检查用户是否有权限访问特定菜单
+  async checkMenuPermission(userId: number, menuId: number): Promise<boolean> {
+    const userRoles = await this.prisma.userRole.findMany({
+      where: { userId },
+      select: { roleId: true },
+    });
+
+    const roleIds = userRoles.map((ur) => ur.roleId);
+
+    const roleMenu = await this.prisma.roleMenu.findFirst({
+      where: {
+        menuId,
+        roleId: {
+          in: roleIds,
+        },
+      },
+    });
+
+    return !!roleMenu;
   }
 }

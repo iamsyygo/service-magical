@@ -40,6 +40,13 @@ describe('MenuService', () => {
               update: jest.fn().mockResolvedValue(mockMenu),
               delete: jest.fn().mockResolvedValue(mockMenu),
             },
+            userRole: {
+              findMany: jest.fn(),
+            },
+            roleMenu: {
+              findMany: jest.fn(),
+              findFirst: jest.fn(),
+            },
           },
         },
       ],
@@ -125,6 +132,50 @@ describe('MenuService', () => {
           children: [{ ...menus[1] }, { ...menus[2] }],
         },
       ]);
+    });
+  });
+
+  describe('getUserMenus', () => {
+    it('should return user menus', async () => {
+      const mockUserRoles = [{ roleId: 1 }];
+      const mockRoleMenus = [
+        {
+          menu: {
+            id: 1,
+            name: '系统管理',
+            parentId: null,
+          },
+        },
+      ];
+
+      jest.spyOn(prisma.userRole, 'findMany').mockResolvedValue(mockUserRoles);
+      jest.spyOn(prisma.roleMenu, 'findMany').mockResolvedValue(mockRoleMenus);
+
+      const result = await service.getUserMenus(1);
+      expect(result).toBeDefined();
+      expect(prisma.userRole.findMany).toHaveBeenCalled();
+      expect(prisma.roleMenu.findMany).toHaveBeenCalled();
+    });
+  });
+
+  describe('checkMenuPermission', () => {
+    it('should return true when user has permission', async () => {
+      const mockUserRoles = [{ roleId: 1 }];
+      const mockRoleMenu = { id: 1 };
+
+      jest.spyOn(prisma.userRole, 'findMany').mockResolvedValue(mockUserRoles);
+      jest.spyOn(prisma.roleMenu, 'findFirst').mockResolvedValue(mockRoleMenu);
+
+      const result = await service.checkMenuPermission(1, 1);
+      expect(result).toBe(true);
+    });
+
+    it('should return false when user has no permission', async () => {
+      jest.spyOn(prisma.userRole, 'findMany').mockResolvedValue([]);
+      jest.spyOn(prisma.roleMenu, 'findFirst').mockResolvedValue(null);
+
+      const result = await service.checkMenuPermission(1, 1);
+      expect(result).toBe(false);
     });
   });
 });

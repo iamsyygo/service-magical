@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { MenuService } from './menu.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiParam } from '@nestjs/swagger';
 import { UnwantedAuthenticate } from '@app/common/decorator/unwanted-authenticate.decorator';
 
 @ApiTags('菜单管理')
@@ -50,5 +50,30 @@ export class MenuController {
   @ApiOperation({ summary: '删除菜单' })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.menuService.remove(id);
+  }
+
+  @ApiOperation({ summary: '获取用户菜单权限' })
+  @ApiParam({ name: 'userId', description: '用户ID' })
+  @Get('user/:userId')
+  getUserMenus(@Param('userId', ParseIntPipe) userId: number) {
+    return this.menuService.getUserMenus(userId);
+  }
+
+  @ApiOperation({ summary: '获取角色菜单权限' })
+  @ApiParam({ name: 'roleId', description: '角色ID' })
+  @Get('role/:roleId')
+  getRoleMenus(@Param('roleId', ParseIntPipe) roleId: number) {
+    return this.menuService.getRoleMenus(roleId);
+  }
+
+  @ApiOperation({ summary: '检查用户菜单权限' })
+  @ApiParam({ name: 'userId', description: '用户ID' })
+  @ApiParam({ name: 'menuId', description: '菜单ID' })
+  @Get('check/:userId/:menuId')
+  checkMenuPermission(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Param('menuId', ParseIntPipe) menuId: number,
+  ) {
+    return this.menuService.checkMenuPermission(userId, menuId);
   }
 }
