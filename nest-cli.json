@@ -117,6 +117,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/auth/tsconfig.app.json"
       }
+    },
+    "menu": {
+      "type": "application",
+      "root": "apps/menu",
+      "entryFile": "main",
+      "sourceRoot": "apps/menu/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/menu/tsconfig.app.json"
+      }
     }
   }
 }

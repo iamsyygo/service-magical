@@ -46,3 +46,24 @@ CREATE TABLE `bookmarks_vault` (
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `system_menu` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `parent_id` INTEGER NULL,
+    `name` VARCHAR(50) NOT NULL,
+    `path` VARCHAR(200) NULL,
+    `component` VARCHAR(255) NULL,
+    `permission` VARCHAR(100) NULL,
+    `type` ENUM('directory', 'menu', 'button') NOT NULL DEFAULT 'menu',
+    `icon` VARCHAR(100) NULL,
+    `order_num` INTEGER NOT NULL DEFAULT 0,
+    `status` BOOLEAN NOT NULL DEFAULT true,
+    `is_external` BOOLEAN NOT NULL DEFAULT false,
+    `is_cache` BOOLEAN NOT NULL DEFAULT false,
+    `is_visible` BOOLEAN NOT NULL DEFAULT true,
+    `created_at` TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    `updated_at` TIMESTAMP(6) NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

@@ -19,9 +19,8 @@ enum Sex {
   UNKNOWN
 }
 
-
 enum Provider {
-  LOCAL @map("local")
+  LOCAL  @map("local")
   GITHUB @map("github")
   GOOGLE @map("google")
 }
@@ -30,27 +29,23 @@ model User {
   id        Int       @id @default(autoincrement())
   username  String    @unique
   password  String    @db.VarChar(100)
-  createdAt DateTime  @default(now()) @db.Timestamp(6) @map("created_at")
-  updatedAt DateTime? @updatedAt @db.Timestamp(6) @map("updated_at")
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
   avatar    String?   @db.VarChar(255)
   sex       Sex       @default(UNKNOWN)
   email     String    @unique
-  
+
   @@map("system_user")
 }
-
-
 
 model UserProvider {
   id           Int      @id @default(autoincrement())
   userId       Int?     @map("user_id")
   provider     Provider @map("provider")
-  providerId   String  @map("provider_id")
-  // accessToken  String? 
-  // refreshToken String? 
-  callbackData Json?   @map("callback_data")
-  createdAt    DateTime @default(now()) @db.Timestamp(6) @map("created_at")
-  updatedAt    DateTime @updatedAt @db.Timestamp(6) @map("updated_at")
+  providerId   String   @map("provider_id")
+  callbackData Json?    @map("callback_data")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamp(6)
 
   @@map("user_provider")
 }
@@ -67,36 +62,6 @@ enum FromType {
   DEFAULT
   CUSTOM
 }
-
-// model quickBuildTemplate {
-//   id        Int       @id @default(autoincrement())
-//   code      String    @db.VarChar(100)
-//   tableName String    @map("table_name") @db.VarChar(100)
-//   comment   String?   @db.VarChar(255)
-//   createdAt DateTime  @default(now()) @db.Timestamp(6)
-//   updatedAt DateTime? @updatedAt @db.Timestamp(6)
-
-//   @@map("quick_build_template")
-// }
-
-// model quickBuildTemplateMap {
-//   id          Int       @id @default(autoincrement())
-//   code        String    @db.VarChar(100)
-//   tableName   String    @map("table_name") @db.VarChar(100)
-//   columnName  String    @unique @map("column_name") @db.VarChar(100)
-//   columnTitle String?   @map("column_title") @db.VarChar(100)
-//   mergeAmount Int?      @default(1) @map("merge_amount")
-//   columnIndex Int       @map("column_index")
-//   rowIndex    Int       @map("row_index")
-//   formType    String    @map("form_type") @db.VarChar(100)
-//   comment     String?   @db.VarChar(255)
-//   pid         Int?      @map("pid")
-//   isInquire   Boolean?  @default(false) @map("is_inquire")
-//   createdAt   DateTime  @default(now()) @db.Timestamp(6)
-//   updatedAt   DateTime? @updatedAt @db.Timestamp(6)
-
-//   @@map("quick_build_template_map")
-// }
 
 model BookmarksVault {
   id          Int       @id @default(autoincrement())
@@ -115,4 +80,30 @@ model BookmarksVault {
   types       String?   @db.VarChar(100)
 
   @@map("bookmarks_vault")
+}
+
+enum MenuType {
+  DIRECTORY @map("directory") // 目录
+  MENU      @map("menu") // 菜单
+  BUTTON    @map("button") // 按钮
+}
+
+model Menu {
+  id         Int       @id @default(autoincrement())
+  parentId   Int?      @map("parent_id") // 父菜单ID
+  name       String    @db.VarChar(50) // 菜单名称
+  path       String?   @db.VarChar(200) // 路由路径
+  component  String?   @db.VarChar(255) // 组件路径
+  permission String?   @db.VarChar(100) // 权限标识
+  type       MenuType  @default(MENU) // 菜单类型
+  icon       String?   @db.VarChar(100) // 图标
+  orderNum   Int       @default(0) @map("order_num") // 显示顺序
+  status     Boolean   @default(true) // 菜单状态
+  isExternal Boolean   @default(false) @map("is_external") // 是否外链
+  isCache    Boolean   @default(false) @map("is_cache") // 是否缓存
+  isVisible  Boolean   @default(true) @map("is_visible") // 是否可见
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt  DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  @@map("system_menu")
 }
