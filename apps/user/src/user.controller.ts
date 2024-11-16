@@ -24,25 +24,25 @@ export class UserController {
     return this.userService.createUser(body);
   }
 
-  @ApiOperation({ summary: '发送注册验证码' })
+  @ApiOperation({ summary: '获取注册验证码' })
   @ApiBody({ type: CreateUserDto })
-  @Post('sendRegisterCaptcha')
+  @Post('getRegisterCaptcha')
   @UnwantedAuthenticate()
-  @MessagePattern('user:send_register_captcha')
-  sendRegisterCaptcha(@Body() body: Prisma.UserCreateInput) {
+  @MessagePattern('user:get_register_captcha')
+  getRegisterCaptcha(@Body() body: Prisma.UserCreateInput) {
     return this.userService.sendCaptcha(body, REDIS_KEYS.REGISTER_CAPTCHA);
   }
 
-  @ApiOperation({ summary: '发送登录证码' })
+  @ApiOperation({ summary: '获取登录验证码' })
   @ApiBody({ type: CreateUserDto })
-  @Post('sendSigninCaptcha')
+  @Post('getSigninCaptcha')
   @UnwantedAuthenticate()
-  @MessagePattern('user:send_signin_captcha')
-  sendSigninCaptcha(@Body() body: Prisma.UserCreateInput) {
+  @MessagePattern('user:get_signin_captcha')
+  getSigninCaptcha(@Body() body: Prisma.UserCreateInput) {
     return this.userService.sendCaptcha(body, REDIS_KEYS.SIGNIN_CAPTCHA);
   }
 
-  @ApiOperation({ summary: '发送修改密码证码' })
+  @ApiOperation({ summary: '获取修改密码验证码' })
   @ApiBody({
     schema: {
       type: 'object',
@@ -51,9 +51,9 @@ export class UserController {
       },
     },
   })
-  @Post('sendUpdatePasswordCaptcha')
-  @MessagePattern('user:sent_update_password_captcha')
-  sendUpdatePasswordCaptcha(@Body() body: Prisma.UserCreateInput) {
+  @Post('getUpdatePasswordCaptcha')
+  @MessagePattern('user:get_update_password_captcha')
+  getUpdatePasswordCaptcha(@Body() body: Prisma.UserCreateInput) {
     return this.userService.sendCaptcha(body, REDIS_KEYS.UPDATE_USER_PASSWORD);
   }
 
@@ -90,7 +90,7 @@ export class UserController {
     return this.userService.refreshToken(body);
   }
 
-  @ApiOperation({ summary: '修改密码' })
+  @ApiOperation({ summary: '修改用户密码' })
   @ApiBody({ type: ChangePasswordDto })
   @Post('changePassword')
   @MessagePattern('user:change_password')

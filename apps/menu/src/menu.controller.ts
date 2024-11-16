@@ -7,13 +7,20 @@ import {
   Body,
   Param,
   ParseIntPipe,
+  Req,
 } from '@nestjs/common';
 import { MenuService } from './menu.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
-import { ApiTags, ApiOperation, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiParam,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { UnwantedAuthenticate } from '@app/common/decorator/unwanted-authenticate.decorator';
 
 @ApiTags('菜单管理')
+@ApiBearerAuth()
 @Controller('menu')
 export class MenuController {
   constructor(private readonly menuService: MenuService) {}
@@ -55,8 +62,8 @@ export class MenuController {
   @ApiOperation({ summary: '获取用户菜单权限' })
   @ApiParam({ name: 'userId', description: '用户ID' })
   @Get('user/:userId')
-  getUserMenus(@Param('userId', ParseIntPipe) userId: number) {
-    return this.menuService.getUserMenus(userId);
+  getUserMenus(@Req() req, @Param('userId', ParseIntPipe) userId: number) {
+    return this.menuService.getUserMenus(req, userId);
   }
 
   @ApiOperation({ summary: '获取角色菜单权限' })

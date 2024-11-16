@@ -33,42 +33,44 @@ export class UserService {
   private readonly jwtService: JwtService;
 
   async createUser(data: Prisma.UserCreateInput & { captcha?: string }) {
-    const captcha = await this.redisService.get(
-      REDIS_KEYS.REGISTER_CAPTCHA + `:${data.email}`,
-    );
+    // 验证码校验
     const captchaRegisterEnabled = JSON.parse(
       this.configService.get('REQUIRE_CAPTCHA_REGISTER', 'true'),
     );
 
-    if (!captcha && captchaRegisterEnabled) {
-      throw new BadRequestException('Captcha is required');
-    }
+    if (captchaRegisterEnabled) {
+      const captcha = await this.redisService.get(
+        REDIS_KEYS.REGISTER_CAPTCHA + `:${data.email}`,
+      );
 
-    if (captchaRegisterEnabled === true) {
       if (!captcha) {
-        throw new BadRequestException('Captcha is expired');
+        throw new BadRequestException('验证码不存在或已过期');
       }
 
       if (captcha !== data.captcha) {
-        throw new BadRequestException('Captcha is invalid');
+        throw new BadRequestException('验证码错误');
       }
     }
 
-    const user = await this.prismaService.user.findUnique({
+    // 检查邮箱和用户名是否已存在
+    const existingUser = await this.prismaService.user.findFirst({
       where: {
-        username: data.username,
-        email: data.email,
+        OR: [{ email: data.email }, { username: data.username }],
       },
     });
 
-    if (user) {
-      return new BadRequestException('User already exists');
+    if (existingUser) {
+      if (existingUser.email === data.email) {
+        throw new BadRequestException('该邮箱已被注册');
+      }
+      if (existingUser.username === data.username) {
+        throw new BadRequestException('该用户名已被使用');
+      }
     }
 
+    // 创建用户
     delete data.captcha;
-
-    const password = hashSync(data.password, 10);
-    data.password = password;
+    data.password = hashSync(data.password, 10);
 
     const result = await this.prismaService.user.create({
       data,
@@ -79,6 +81,7 @@ export class UserService {
       },
     });
 
+    // 清除验证码
     if (result) {
       await this.redisService.del(
         REDIS_KEYS.REGISTER_CAPTCHA + `:${data.email}`,
@@ -98,7 +101,7 @@ export class UserService {
     await this.redisService.set(
       redisKey + `:${email}`,
       captcha,
-      60 * 5, // 5 min
+      60 * 5, // 5分钟
     );
 
     return await this.emailService.sendMail({

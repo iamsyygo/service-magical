@@ -1,5 +1,5 @@
 import { PrismaService } from '@app/prisma';
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { Menu } from '@prisma/client';
 import { CreateMenuDto } from './dto/create-menu.dto';
 
@@ -76,11 +76,17 @@ export class MenuService {
       });
     };
 
-    return buildTree(parentId);
+    return buildTree(parentId) || [];
   }
 
   // 获取用户的菜单权限
-  async getUserMenus(userId: number) {
+  async getUserMenus(req: Express.Request, userId: number) {
+    const requestUserId = req.user?.id;
+
+    if (requestUserId !== userId) {
+      throw new ForbiddenException('无权限，用户ID不匹配');
+    }
+
     // 获取用户的所有角色ID
     const userRoles = await this.prisma.userRole.findMany({
       where: { userId },

@@ -1,13 +1,10 @@
 import {
   ArgumentsHost,
-  BadRequestException,
   Catch,
   ExceptionFilter,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { Inject } from '@nestjs/common/decorators';
-import { Request } from 'express';
 
 /**
  * Custom exception filter
