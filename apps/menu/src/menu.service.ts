@@ -101,6 +101,11 @@ export class MenuService {
         roleId: {
           in: roleIds,
         },
+        menu: {
+          type: {
+            not: 'BUTTON', // 排除按钮类型的菜单
+          },
+        },
       },
       include: {
         menu: true,

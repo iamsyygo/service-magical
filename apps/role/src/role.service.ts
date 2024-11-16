@@ -38,7 +38,7 @@ export class RoleService {
     name?: string;
     status?: boolean;
   }) {
-    const { page = 1, pageSize = 10, name, status } = query;
+    const { page = 1, pageSize = 10, name = '', status } = query;
     const where = {
       ...(name && { name: { contains: name } }),
       ...(typeof status !== 'undefined' && { status }),
@@ -49,7 +49,7 @@ export class RoleService {
       this.prisma.role.findMany({
         where,
         skip: (page - 1) * pageSize,
-        take: pageSize,
+        take: Number(pageSize),
         include: {
           menus: {
             include: {

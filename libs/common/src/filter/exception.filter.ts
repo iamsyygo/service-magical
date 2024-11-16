@@ -32,6 +32,7 @@ export class AppExceptionFilter implements ExceptionFilter {
       // @ts-expect-error
       result.message = response?.message;
     } else {
+      console.error(exception);
       result.error = 'Internal server error';
       // result.message = exception.toString();
     }
