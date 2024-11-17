@@ -21,7 +21,7 @@ describe('MenuController (e2e)', () => {
     orderNum: 1,
     status: true,
     isExternal: false,
-    isCache: false,
+    keepAlive: false,
     isVisible: true,
     createdAt: new Date(),
     updatedAt: new Date(),

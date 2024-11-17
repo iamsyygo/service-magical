@@ -64,7 +64,7 @@ export class CreateMenuDto {
   @ApiProperty({ description: '是否缓存', required: false, default: false })
   @IsOptional()
   @IsBoolean()
-  isCache?: boolean;
+  keepAlive?: boolean;
 
   @ApiProperty({ description: '是否显示', required: false, default: true })
   @IsOptional()

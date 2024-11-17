@@ -97,22 +97,23 @@ enum MenuType {
 
 // 菜单模型
 model Menu {
-  id         Int        @id @default(autoincrement())
-  parentId   Int?       @map("parent_id") // 父菜单ID
-  name       String     @db.VarChar(50) // 菜单名称
-  path       String?    @db.VarChar(200) // 路由路径
-  component  String?    @db.VarChar(255) // 组件路径
-  permission String?    @db.VarChar(100) // 权限标识
-  type       MenuType   @default(MENU) // 菜单类型
-  icon       String?    @db.VarChar(100) // 图标
-  orderNum   Int        @default(0) @map("order_num") // 显示顺序
-  status     Boolean    @default(true) // 菜单状态
-  isExternal Boolean    @default(false) @map("is_external") // 是否外链
-  isCache    Boolean    @default(false) @map("is_cache") // 是否缓存
-  isVisible  Boolean    @default(true) @map("is_visible") // 是否可见
-  createdAt  DateTime   @default(dbgenerated("NOW()")) @db.DateTime @map("created_at") // 创建时间
-  updatedAt  DateTime   @default(dbgenerated("NOW() ON UPDATE NOW()")) @db.Timestamp(0) @map("updated_at") // 更新时间
-  RoleMenu   RoleMenu[] // 角色菜单关联
+  id            Int        @id @default(autoincrement())
+  parentId      Int?       @map("parent_id") // 父菜单ID
+  name          String     @db.VarChar(50) // 菜单名称
+  path          String?    @db.VarChar(200) // 路由路径
+  component     String?    @db.VarChar(255) // 组件路径
+  componentName String?    @db.VarChar(100) @map("component_name") // 组件名称
+  permission    String?    @db.VarChar(100) // 权限标识
+  type          MenuType   @default(MENU) // 菜单类型
+  icon          String?    @db.VarChar(100) // 图标
+  orderNum      Int        @default(0) @map("order_num") // 显示顺序
+  status        Boolean    @default(true) // 菜单状态
+  isExternal    Boolean    @default(false) @map("is_external") // 是否外链
+  keepAlive     Boolean    @default(false) @map("keep_alive") // 是否缓存
+  isVisible     Boolean    @default(true) @map("is_visible") // 是否可见
+  createdAt     DateTime   @default(dbgenerated("NOW()")) @db.DateTime @map("created_at") // 创建时间
+  updatedAt     DateTime   @default(dbgenerated("NOW() ON UPDATE NOW()")) @db.Timestamp(0) @map("updated_at") // 更新时间
+  RoleMenu      RoleMenu[] // 角色菜单关联
 
   @@map("system_menu")
 }

@@ -98,14 +98,16 @@ SET @server_icon = 'i-fluent-emoji:desktop-computer';
 SET @tool_icon = 'i-fluent-emoji:hammer-and-wrench';
 SET @api_icon = 'i-fluent-emoji:antenna-bars';
 
--- 插入系统管理目录
-INSERT INTO `system_menu` (`parent_id`, `name`, `path`, `component`, `permission`, `type`, `icon`, `order_num`, `status`, `is_external`, `is_cache`, `is_visible`) 
-VALUES (NULL, '系统管理', '/atl/system', NULL, NULL, 'directory', @setting_icon, 1, 1, 0, 0, 1);
+-- 系统管理目录
+INSERT INTO `system_menu` (`parent_id`, `name`, `path`, `component`, `component_name`, `permission`, `type`, `icon`, `order_num`, `status`, `is_external`, `keep_alive`, `is_visible`) 
+VALUES (NULL, '系统管理', '/atl/system', NULL, 'system_manage', NULL, 'directory', @setting_icon, 1, 1, 0, 0, 1);
+
 SET @system_id = LAST_INSERT_ID();
 
--- 插入用户管理菜单
-INSERT INTO `system_menu` (`parent_id`, `name`, `path`, `component`, `permission`, `type`, `icon`, `order_num`, `status`, `is_external`, `is_cache`, `is_visible`) 
-VALUES (@system_id, '用户管理', '/atl/system/user', '/views/system/user/index', 'system:user:list', 'menu', @user_icon, 1, 1, 0, 0, 1);
+-- 用户管理菜单
+INSERT INTO `system_menu` (`parent_id`, `name`, `path`, `component`, `component_name`, `permission`, `type`, `icon`, `order_num`, `status`, `is_external`, `keep_alive`, `is_visible`) 
+VALUES (@system_id, '用户管理', '/atl/system/user', '/views/system/user/index', 'system_user', 'system:user:list', 'menu', @user_icon, 1, 1, 0, 0, 1);
+
 SET @user_id = LAST_INSERT_ID();
 
 -- 用户管理按钮
@@ -117,9 +119,10 @@ VALUES
 (@user_id, '用户删除', 'system:user:delete', 'button', 4, 1, 1),
 (@user_id, '重置密码', 'system:user:reset', 'button', 5, 1, 1);
 
--- 插入角色管理菜单
-INSERT INTO `system_menu` (`parent_id`, `name`, `path`, `component`, `permission`, `type`, `icon`, `order_num`, `status`, `is_external`, `is_cache`, `is_visible`) 
-VALUES (@system_id, '角色管理', '/atl/system/role', '/views/system/role/index', 'system:role:list', 'menu', @role_icon, 2, 1, 0, 0, 1);
+-- 角色管理菜单
+INSERT INTO `system_menu` (`parent_id`, `name`, `path`, `component`, `component_name`, `permission`, `type`, `icon`, `order_num`, `status`, `is_external`, `keep_alive`, `is_visible`) 
+VALUES (@system_id, '角色管理', '/atl/system/role', '/views/system/role/index', 'system_role', 'system:role:list', 'menu', @role_icon, 2, 1, 0, 0, 1);
+
 SET @role_id = LAST_INSERT_ID();
 
 -- 角色管理按钮
@@ -130,9 +133,10 @@ VALUES
 (@role_id, '角色修改', 'system:role:update', 'button', 3, 1, 1),
 (@role_id, '角色删除', 'system:role:delete', 'button', 4, 1, 1);
 
--- 插入菜单管理
-INSERT INTO `system_menu` (`parent_id`, `name`, `path`, `component`, `permission`, `type`, `icon`, `order_num`, `status`, `is_external`, `is_cache`, `is_visible`) 
-VALUES (@system_id, '菜单管理', '/atl/system/menu', '/views/system/menu/index', 'system:menu:list', 'menu', @menu_icon, 3, 1, 0, 0, 1);
+-- 菜单管理
+INSERT INTO `system_menu` (`parent_id`, `name`, `path`, `component`, `component_name`, `permission`, `type`, `icon`, `order_num`, `status`, `is_external`, `keep_alive`, `is_visible`) 
+VALUES (@system_id, '菜单管理', '/atl/system/menu', '/views/system/menu/index', 'system_menu', 'system:menu:list', 'menu', @menu_icon, 3, 1, 0, 0, 1);
+
 SET @menu_id = LAST_INSERT_ID();
 
 -- 菜单管理按钮
@@ -143,27 +147,29 @@ VALUES
 (@menu_id, '菜单修改', 'system:menu:update', 'button', 3, 1, 1),
 (@menu_id, '菜单删除', 'system:menu:delete', 'button', 4, 1, 1);
 
--- 插入系统监控目录
-INSERT INTO `system_menu` (`parent_id`, `name`, `path`, `component`, `permission`, `type`, `icon`, `order_num`, `status`, `is_external`, `is_cache`, `is_visible`) 
-VALUES (NULL, '系统监控', '/atl/monitor', NULL, NULL, 'directory', @monitor_icon, 2, 1, 0, 0, 1);
+-- 系统监控目录
+INSERT INTO `system_menu` (`parent_id`, `name`, `path`, `component`, `component_name`, `permission`, `type`, `icon`, `order_num`, `status`, `is_external`, `keep_alive`, `is_visible`) 
+VALUES (NULL, '系统监控', '/atl/monitor', NULL, 'monitor_manage', NULL, 'directory', @monitor_icon, 2, 1, 0, 0, 1);
+
 SET @monitor_id = LAST_INSERT_ID();
 
--- 插入在线用户菜单
-INSERT INTO `system_menu` (`parent_id`, `name`, `path`, `component`, `permission`, `type`, `icon`, `order_num`, `status`, `is_external`, `is_cache`, `is_visible`) 
-VALUES (@monitor_id, '在线用户', '/atl/monitor/online', '/views/monitor/online/index', 'monitor:online:list', 'menu', @online_icon, 1, 1, 0, 0, 1);
+-- 在线用户
+INSERT INTO `system_menu` (`parent_id`, `name`, `path`, `component`, `component_name`, `permission`, `type`, `icon`, `order_num`, `status`, `is_external`, `keep_alive`, `is_visible`) 
+VALUES (@monitor_id, '在线用户', '/atl/monitor/online', '/views/monitor/online/index', 'monitor_online', 'monitor:online:list', 'menu', @online_icon, 1, 1, 0, 0, 1);
 
--- 插入服务监控菜单
-INSERT INTO `system_menu` (`parent_id`, `name`, `path`, `component`, `permission`, `type`, `icon`, `order_num`, `status`, `is_external`, `is_cache`, `is_visible`) 
-VALUES (@monitor_id, '服务监控', '/atl/monitor/server', '/views/monitor/server/index', 'monitor:server:list', 'menu', @server_icon, 2, 1, 0, 0, 1);
+-- 服务监控
+INSERT INTO `system_menu` (`parent_id`, `name`, `path`, `component`, `component_name`, `permission`, `type`, `icon`, `order_num`, `status`, `is_external`, `keep_alive`, `is_visible`) 
+VALUES (@monitor_id, '服务监控', '/atl/monitor/server', '/views/monitor/server/index', 'monitor_server', 'monitor:server:list', 'menu', @server_icon, 2, 1, 0, 0, 1);
 
--- 插入系统工具目录
-INSERT INTO `system_menu` (`parent_id`, `name`, `path`, `component`, `permission`, `type`, `icon`, `order_num`, `status`, `is_external`, `is_cache`, `is_visible`) 
-VALUES (NULL, '系统工具', '/atl/tool', NULL, NULL, 'directory', @tool_icon, 3, 1, 0, 0, 1);
+-- 系统工具目录
+INSERT INTO `system_menu` (`parent_id`, `name`, `path`, `component`, `component_name`, `permission`, `type`, `icon`, `order_num`, `status`, `is_external`, `keep_alive`, `is_visible`) 
+VALUES (NULL, '系统工具', '/atl/tool', NULL, 'tool_manage', NULL, 'directory', @tool_icon, 3, 1, 0, 0, 1);
+
 SET @tool_id = LAST_INSERT_ID();
 
--- 插入系统接口菜单
-INSERT INTO `system_menu` (`parent_id`, `name`, `path`, `component`, `permission`, `type`, `icon`, `order_num`, `status`, `is_external`, `is_cache`, `is_visible`) 
-VALUES (@tool_id, '系统接口', '/atl/tool/swagger', '/views/tool/swagger/index', 'tool:swagger:list', 'menu', @api_icon, 1, 1, 0, 0, 1);
+-- 系统接口
+INSERT INTO `system_menu` (`parent_id`, `name`, `path`, `component`, `component_name`, `permission`, `type`, `icon`, `order_num`, `status`, `is_external`, `keep_alive`, `is_visible`) 
+VALUES (@tool_id, '系统接口', '/atl/tool/swagger', '/views/tool/swagger/index', 'tool_swagger', 'tool:swagger:list', 'menu', @api_icon, 1, 1, 0, 0, 1);
 
 -- 步骤5: 初始化用户角色关联
 -- 为用户分配角色
