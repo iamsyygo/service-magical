@@ -39,7 +39,7 @@ export class AuthGuard implements CanActivate {
     const authorization = request.headers.authorization;
 
     if (!authorization) {
-      throw new UnauthorizedException('User is not logged in');
+      throw new UnauthorizedException('用户未登录');
     }
 
     try {
@@ -58,7 +58,7 @@ export class AuthGuard implements CanActivate {
       };
       return true;
     } catch (e) {
-      throw new UnauthorizedException('Token is invalid');
+      throw new UnauthorizedException('无效的令牌');
     }
   }
 }

@@ -7,8 +7,8 @@ generator client {
 
 // 数据源配置
 datasource db {
-  provider = "mysql"
-  url = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
   relationMode = "foreignKeys" // 外键模式
 }
 
@@ -31,8 +31,8 @@ model User {
   id        Int        @id @default(autoincrement())
   username  String     @unique // 用户名
   password  String     @db.VarChar(100) // 密码
-  createdAt DateTime   @default(dbgenerated("NOW()")) @db.DateTime @map("created_at") // 创建时间
-  updatedAt DateTime   @default(dbgenerated("NOW() ON UPDATE NOW()")) @db.Timestamp(0) @map("updated_at") // 更新时间
+  createdAt DateTime   @default(dbgenerated("NOW()")) @map("created_at") @db.DateTime // 创建时间
+  updatedAt DateTime   @default(dbgenerated("NOW() ON UPDATE NOW()")) @map("updated_at") @db.Timestamp(0) // 更新时间
   avatar    String?    @db.VarChar(255) // 头像
   sex       Sex        @default(UNKNOWN) // 性别
   email     String     @unique // 邮箱
@@ -48,8 +48,8 @@ model UserProvider {
   provider     Provider @map("provider") // 提供商类型
   providerId   String   @map("provider_id") // 提供商用户ID
   callbackData Json?    @map("callback_data") // 回调数据
-  createdAt    DateTime @default(dbgenerated("NOW()")) @db.DateTime @map("created_at") // 创建时间
-  updatedAt    DateTime @default(dbgenerated("NOW() ON UPDATE NOW()")) @db.Timestamp(0) @map("updated_at") // 更新时间
+  createdAt    DateTime @default(dbgenerated("NOW()")) @map("created_at") @db.DateTime // 创建时间
+  updatedAt    DateTime @default(dbgenerated("NOW() ON UPDATE NOW()")) @map("updated_at") @db.Timestamp(0) // 更新时间
 
   @@map("user_provider")
 }
@@ -70,20 +70,20 @@ enum FromType {
 
 // 书签库模型
 model BookmarksVault {
-  id          Int       @id @default(autoincrement())
-  createdAt   DateTime  @default(dbgenerated("NOW()")) @db.DateTime @map("created_at") // 创建时间
-  updatedAt   DateTime  @default(dbgenerated("NOW() ON UPDATE NOW()")) @db.Timestamp(0) @map("updated_at") // 更新时间
-  title       String    @db.VarChar(200) // 标题
-  originTitle String?   @map("origin_title") @db.VarChar(200) // 原始标题
-  defTitle    String?   @map("def_title") @db.VarChar(200) // 默认标题
-  url         String    @db.VarChar(800) // URL
-  addDate     Int       @map("add_date") // 添加日期
-  icon        String?   @db.Text // 图标
-  html        String?   @db.Text // HTML内容
-  text        String?   @db.Text // 文本内容
-  isHandled   Boolean?  @default(false) @map("is_handled") // 是否已处理
-  describes   String?   @db.VarChar(500) // 描述
-  types       String?   @db.VarChar(100) // 类型
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(dbgenerated("NOW()")) @map("created_at") @db.DateTime // 创建时间
+  updatedAt   DateTime @default(dbgenerated("NOW() ON UPDATE NOW()")) @map("updated_at") @db.Timestamp(0) // 更新时间
+  title       String   @db.VarChar(200) // 标题
+  originTitle String?  @map("origin_title") @db.VarChar(200) // 原始标题
+  defTitle    String?  @map("def_title") @db.VarChar(200) // 默认标题
+  url         String   @db.VarChar(800) // URL
+  addDate     Int      @map("add_date") // 添加日期
+  icon        String?  @db.Text // 图标
+  html        String?  @db.Text // HTML内容
+  text        String?  @db.Text // 文本内容
+  isHandled   Boolean? @default(false) @map("is_handled") // 是否已处理
+  describes   String?  @db.VarChar(500) // 描述
+  types       String?  @db.VarChar(100) // 类型
 
   @@map("bookmarks_vault")
 }
@@ -102,7 +102,7 @@ model Menu {
   name          String     @db.VarChar(50) // 菜单名称
   path          String?    @db.VarChar(200) // 路由路径
   component     String?    @db.VarChar(255) // 组件路径
-  componentName String?    @db.VarChar(100) @map("component_name") // 组件名称
+  componentName String?    @map("component_name") @db.VarChar(100) // 组件名称
   permission    String?    @db.VarChar(100) // 权限标识
   type          MenuType   @default(MENU) // 菜单类型
   icon          String?    @db.VarChar(100) // 图标
@@ -111,8 +111,8 @@ model Menu {
   isExternal    Boolean    @default(false) @map("is_external") // 是否外链
   keepAlive     Boolean    @default(false) @map("keep_alive") // 是否缓存
   isVisible     Boolean    @default(true) @map("is_visible") // 是否可见
-  createdAt     DateTime   @default(dbgenerated("NOW()")) @db.DateTime @map("created_at") // 创建时间
-  updatedAt     DateTime   @default(dbgenerated("NOW() ON UPDATE NOW()")) @db.Timestamp(0) @map("updated_at") // 更新时间
+  createdAt     DateTime   @default(dbgenerated("NOW()")) @map("created_at") @db.DateTime // 创建时间
+  updatedAt     DateTime   @default(dbgenerated("NOW() ON UPDATE NOW()")) @map("updated_at") @db.Timestamp(0) // 更新时间
   RoleMenu      RoleMenu[] // 角色菜单关联
 
   @@map("system_menu")
@@ -120,13 +120,13 @@ model Menu {
 
 // 角色模型
 model Role {
-  id        Int       @id @default(autoincrement())
-  name      String    @db.VarChar(50) // 角色名称
-  code      String    @unique @db.VarChar(50) // 角色标识
-  status    Boolean   @default(true) // 角色状态
-  remark    String?   @db.VarChar(200) // 备注
-  createdAt DateTime  @default(dbgenerated("NOW()")) @db.DateTime @map("created_at") // 创建时间
-  updatedAt DateTime  @default(dbgenerated("NOW() ON UPDATE NOW()")) @db.Timestamp(0) @map("updated_at") // 更新时间
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(50) // 角色名称
+  code      String   @unique @db.VarChar(50) // 角色标识
+  status    Boolean  @default(true) // 角色状态
+  remark    String?  @db.VarChar(200) // 备注
+  createdAt DateTime @default(dbgenerated("NOW()")) @map("created_at") @db.DateTime // 创建时间
+  updatedAt DateTime @default(dbgenerated("NOW() ON UPDATE NOW()")) @map("updated_at") @db.Timestamp(0) // 更新时间
 
   // 关联表
   users UserRole[] // 用户角色关联
@@ -140,7 +140,7 @@ model UserRole {
   id        Int      @id @default(autoincrement())
   userId    Int      @map("user_id") // 用户ID
   roleId    Int      @map("role_id") // 角色ID
-  createdAt DateTime @default(dbgenerated("NOW()")) @db.DateTime @map("created_at") // 创建时间
+  createdAt DateTime @default(dbgenerated("NOW()")) @map("created_at") @db.DateTime // 创建时间
 
   role Role @relation(fields: [roleId], references: [id]) // 角色关联
   user User @relation(fields: [userId], references: [id]) // 用户关联
@@ -154,7 +154,7 @@ model RoleMenu {
   id        Int      @id @default(autoincrement())
   roleId    Int      @map("role_id") // 角色ID
   menuId    Int      @map("menu_id") // 菜单ID
-  createdAt DateTime @default(dbgenerated("NOW()")) @db.DateTime @map("created_at") // 创建时间
+  createdAt DateTime @default(dbgenerated("NOW()")) @map("created_at") @db.DateTime // 创建时间
 
   role Role @relation(fields: [roleId], references: [id]) // 角色关联
   menu Menu @relation(fields: [menuId], references: [id]) // 菜单关联

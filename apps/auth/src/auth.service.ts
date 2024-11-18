@@ -35,11 +35,11 @@ export class AuthService {
     //   throw new BadRequestException('Email or username is required');
     // }
     if (!email) {
-      throw new BadRequestException('Email is required');
+      throw new BadRequestException('请输入邮箱');
     }
 
     if (!password) {
-      throw new BadRequestException('Password is required');
+      throw new BadRequestException('请输入密码');
     }
 
     let captchaLoginEnabled = true;
@@ -51,7 +51,7 @@ export class AuthService {
     } catch (error) {}
 
     if (!captcha && captchaLoginEnabled) {
-      throw new BadRequestException('Captcha is required');
+      throw new BadRequestException('请输入验证码');
     }
 
     if (captchaLoginEnabled) {
@@ -60,11 +60,11 @@ export class AuthService {
       );
 
       if (!storedCaptcha) {
-        throw new BadRequestException('Captcha is expired');
+        throw new BadRequestException('验证码已过期');
       }
 
       if (storedCaptcha !== captcha) {
-        throw new BadRequestException('Captcha is invalid');
+        throw new BadRequestException('验证码错误');
       }
     }
     const user = await this.prismaService.user.findUnique({
@@ -75,12 +75,12 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new BadRequestException('User not found');
+      throw new BadRequestException('用户不存在');
     }
 
     const isPasswordValid = compareSync(password, user.password);
     if (!isPasswordValid) {
-      throw new BadRequestException('Password is invalid');
+      throw new BadRequestException('密码错误');
     }
     return user;
   }

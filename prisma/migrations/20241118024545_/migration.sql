@@ -2,7 +2,6 @@
   Warnings:
 
   - You are about to alter the column `created_at` on the `bookmarks_vault` table. The data in that column could be lost. The data in that column will be cast from `DateTime(0)` to `DateTime`.
-  - You are about to drop the column `is_cache` on the `system_menu` table. All the data in the column will be lost.
   - You are about to alter the column `created_at` on the `system_menu` table. The data in that column could be lost. The data in that column will be cast from `DateTime(0)` to `DateTime`.
   - You are about to alter the column `created_at` on the `system_role` table. The data in that column could be lost. The data in that column will be cast from `DateTime(0)` to `DateTime`.
   - You are about to alter the column `created_at` on the `system_role_menu` table. The data in that column could be lost. The data in that column will be cast from `DateTime(0)` to `DateTime`.
@@ -16,9 +15,7 @@ ALTER TABLE `bookmarks_vault` MODIFY `created_at` DATETIME NOT NULL DEFAULT NOW(
     MODIFY `updated_at` TIMESTAMP(0) NOT NULL DEFAULT NOW() ON UPDATE NOW();
 
 -- AlterTable
-ALTER TABLE `system_menu` DROP COLUMN `is_cache`,
-    ADD COLUMN `keep_alive` BOOLEAN NOT NULL DEFAULT false,
-    MODIFY `created_at` DATETIME NOT NULL DEFAULT NOW(),
+ALTER TABLE `system_menu` MODIFY `created_at` DATETIME NOT NULL DEFAULT NOW(),
     MODIFY `updated_at` TIMESTAMP(0) NOT NULL DEFAULT NOW() ON UPDATE NOW();
 
 -- AlterTable
